@@ -1,0 +1,686 @@
+#|
+
+Written by Chuck in 2024
+https://bogorad.github.io/
+
+Based on the brilliant Miryoku_kmonad => Kinesis layout
+https://github.com/manna-harbour/miryoku_kmonad
+
+With enourmous help from the author of Kanata
+https://github.com/jtroo
+
+This is my second attempt at Kanata configuration.
+https://github.com/jtroo/kanata/
+
+First one failed miseably because I wanted to
+just use a config from Miryoku_KMonad and neglected
+to read the fucking manual.
+
+Reasons for trying again:
+=========================
+1. KMonad isn't friendly with the mouse.
+2. KMonad can't do chords, and I use them, a lot!
+3. I like the idea of RUST better than HASKEL :)
+
+About layers:
+=============
+0. Closely following the logic of Miryoku/Kinesis
+1. U_BASE is the defualt (COLEMAK-DH)
+2. U_QWERTY - no key remapping, used for Cyrillic
+   with 2/3-taps for missing chars
+3. U_TAP has almost everything disabled
+   (just U_NAV to be able to return to U_BASE)
+4. U_NUM has nubmers (basically, numpad)
+5. U_SYM - effectively shifted U_NUM
+6. U_FUN - for function and other seldom used keys
+7. U_MOUSE - for mouse emulation
+   AND ENG/RUS swithcing
+8. U_BUTTON has buttons and HYPER-combos
+   to be inerpreted by the OS
+
+Notable changes from Miryoku/Kinesis:
+=====================================
+1. U_BASE:
+1.1. Considered removing mod-taps, removed for now,
+     using thumb-chords (e.g., lfst is spc+t
+1.2. Added some chords
+1.3. Swapped ENTER and BACKSPACE
+
+2. U_NAV
+2.1. Changed direction keys: h/j/k/l with Colemak is just stupid.
+2.2. Added [{()}] for VIM-style navigation
+2.3. Moved CAPS and replaced it with CAPS-WORD/CAPS (tap-dance)
+2.4. Swapped ENTER and BACKSPACE (to follow U_BASE)
+2.5. Threw away copy/cut/paste, used chords nstead.
+2.6. Moved home/end, pgup/pgdn.
+2.7. Added ctrl-tab/s-tab for tab navigation.
+2.8. Added alt-esc/s-esc for window navigation
+     (doesn't work with fucking MS-Egde!!)
+     window switching always resets the language to ENG.
+
+3. U_MOUSE
+3.1. Changed direction keys to match U_NAV.
+3.2. Added language switching ENG/RUS, one more slot available
+3.3. Moved scroll wheel buttons
+3.4. This and U_MEDIA are the only two layers
+     where U_TAP/U_QWERTY/U_BASE switching is possible
+3.5. Threw away copy/cut/paste, use chords in U_BASE nstead.
+
+Here'a an empty layer declaration, 
+so we can copy+paste it and customize
+
+(deflayer U_NEW
+  ;; right half
+  XX      XX      XX      XX      XX
+  XX      XX      XX      XX      XX
+  XX      XX      XX      XX      XX
+  ;; thumbs
+  XX              XX              XX
+  ;; left half
+  XX      XX      XX      XX      XX
+  XX      XX      XX      XX      XX
+  XX      XX      XX      XX      XX
+  ;; thumbs
+  XX              XX              XX
+)
+
+|#
+
+;; config stuff
+(defcfg
+  process-unmapped-keys yes
+  block-unmapped-keys yes
+  danger-enable-cmd yes
+)
+
+;; global variables
+(defvar
+  tap-timeout   200
+  hold-timeout  200
+  tt $tap-timeout
+  ht $hold-timeout
+)
+
+;; some missing keys here
+;; for some reason stopcd didn't work
+(deflocalkeys-win
+;;(deflocalkeys-wintercept
+  stopcd 166
+)
+
+;; we'll inercept only these keys
+;;
+;; using left and right halves of
+;; the keyboard separately
+(defsrc
+  ;; left
+  q       w       e       r       t
+  a       s       d       f       g
+  z       x       c       v       b
+  bspc            del             end
+  ;; right
+  y       u       i       o       p
+  h       j       k       l       ;
+  n       m       ,       .       /
+  pgdn            ent             spc
+)
+
+#|
+This section is here because of the way Kanata processes
+events. The idea is that FakeKeys make an action atomic,
+so it can be serialized via (macro fake1 fake2 fake3).
+|#
+(deffakekeys
+  ;; win-input swithing - add more here
+  fake-win-eng (multi lalt lsft 0)
+  fake-win-rus (multi lalt lsft 1)
+  ;;
+  ;; permanent layer-switching
+  fake-lsw-bas (layer-switch U_BASE)
+  fake-lsw-fun (layer-switch U_FUN)
+  fake-lsw-nav (layer-switch U_NAV)
+  fake-lsw-num (layer-switch U_NUM)
+  fake-lsw-med (layer-switch U_MEDIA)
+  fake-lsw-mou (layer-switch U_MOUSE)
+  fake-lsw-qwe (layer-switch U_QWERTY)
+  fake-lsw-tap (layer-switch U_TAP)
+  fake-lsw-sym (layer-switch U_SYM)
+  ;;
+  ;; symbols to be handied by OS
+  fake-hyper-a (multi rmet rctl alt a)
+  fake-hyper-b (multi rmet rctl alt b)
+  fake-hyper-c (multi rmet rctl alt c)
+  fake-hyper-d (multi rmet rctl alt d)
+  fake-hyper-e (multi rmet rctl alt e)
+  fake-hyper-f (multi rmet rctl alt f)
+  fake-hyper-g (multi rmet rctl alt g)
+  fake-hyper-h (multi rmet rctl alt h)
+  fake-hyper-i (multi rmet rctl alt i)
+  fake-hyper-j (multi rmet rctl alt j)
+  fake-hyper-k (multi rmet rctl alt k)
+)
+;; shorter names for fake keys etc
+(defalias
+  ;; shorter names for layer switches
+  lsw-bas (on-press-fakekey fake-lsw-bas tap)
+  lsw-fun (on-press-fakekey fake-lsw-fun tap)
+  lsw-nav (on-press-fakekey fake-lsw-nav tap)
+  lsw-num (on-press-fakekey fake-lsw-num tap)
+  lsw-med (on-press-fakekey fake-lsw-med tap)
+  lsw-mou (on-press-fakekey fake-lsw-mou tap)
+  lsw-qwe (on-press-fakekey fake-lsw-qwe tap)
+  lsw-tap (on-press-fakekey fake-lsw-tap tap)
+  lsw-sym (on-press-fakekey fake-lsw-sym tap)
+  ;; shorter names for win-input swithing
+  win-eng (on-press-fakekey fake-win-eng tap)
+  win-rus (on-press-fakekey fake-win-rus tap)
+  ;; aliases for keyboard switching
+  eng (macro @lsw-bas @win-eng)
+  rus (macro @lsw-qwe @win-rus)
+  ;; Windows back/forward, while switching to English
+  wbw (macro @lsw-bas @win-eng A-S-tab)
+  wfw (macro @lsw-bas @win-eng A-tab)
+)
+
+;; aliases - so we can use short labels in layer maps
+(defalias
+  ;; layer switching
+  ;; temporary layer switching
+  lwh-but   (layer-while-held U_BUTTON)
+  lwh-fun   (layer-while-held U_FUN)
+  lwh-nav   (layer-while-held U_NAV)
+  lwh-num   (layer-while-held U_NUM)
+  lwh-med   (layer-while-held U_MEDIA)
+  lwh-mou   (layer-while-held U_MOUSE)
+  lwh-sym   (layer-while-held U_SYM)
+  ;;
+  ;; tap-hold actions for thumb keys
+  ;; left (left-2-right order)
+  esc-med   (tap-hold-press $tt $ht esc @lwh-med)
+  spc-nav   (tap-hold-press $tt 150 spc @lwh-nav)
+  tab-mou   (tap-hold-press $tt $ht tab @lwh-mou)
+  ;; right (left-2-right order)
+  bks-sym   (tap-hold-press $tt $ht bks @lwh-sym)
+  ret-num   (tap-hold-press $tt $ht ret @lwh-num)
+  del-fun   (tap-hold-press $tt $ht del @lwh-fun)
+
+  ;; home row modifiers
+  ;; first - for U_BASE
+  ;; left
+  met-a     (tap-hold-press $tt $ht a lmeta)
+  alt-r     (tap-hold-press $tt $ht r lalt)
+  ctl-s     (tap-hold-press $tt $ht s lctl)
+  sft-t     (tap-hold-press $tt $ht t lsft)
+  ;; right
+  sft-n     (tap-hold-press $tt $ht n lsft)
+  ctl-e     (tap-hold-press $tt $ht e lctl)
+  alt-i     (tap-hold-press $tt $ht i lalt)
+  met-o     (tap-hold-press $tt $ht o lmet)
+  ;;
+  ;; second for U_QWERTY
+  ;; left
+  ;; no need to redefine met-a, it's already defined in U_BASE
+  alt-s     (tap-hold-press $tt $ht s alt)
+  ctl-d     (tap-hold-press $tt $ht d ctl)
+  sft-f     (tap-hold-press $tt $ht f sft)
+  ;; home row modifiers: right half
+  ;; right
+  sft-j     (tap-hold-press $tt $ht j sft)
+  ctl-k     (tap-hold-press $tt $ht k ctl)
+  alt-l     (tap-hold-press $tt $ht l alt)
+  met-;     (tap-hold-press $tt $ht ; met)
+
+  ;; button layer activation
+  but-z     (tap-hold-press $tt $ht z @lwh-but)
+  but-/     (tap-hold-press $tt $ht / @lwh-but)
+  ;; right/grey alt (do I need it?)
+  ralt-x    (tap-hold-press $tt $ht x ralt)
+  ralt-.    (tap-hold-press $tt $ht . ralt)
+
+  ;; UNICODE
+  sml  (unicode 😀)
+  sad  (unicode 🙁)
+  euro (unicode €)
+  ;; {[()]}
+  lbrace (unicode {)
+  rbrace (unicode })
+  lbrack (unicode [)
+  rbrack (unicode ])
+  lparen S-9
+  rparen S-0
+
+  ;; aliases for secondary layers:
+  ;;   no-key / permanent layer-switch
+  ;; EXPLANATION:
+  ;; first tap => no action (XX)
+  ;; you need to TAP the key TWICE, tiemout=200ms,
+  ;; to permanently SWITCH to the layer wanted
+  n-tap (tap-dance $tt (XX @lsw-tap))
+  n-qwe (tap-dance $tt (XX @lsw-qwe))
+  n-bas (tap-dance $tt (XX @lsw-bas))
+  n-num (tap-dance $tt (XX @lsw-num))
+  n-nav (tap-dance $tt (XX @lsw-nav))
+  n-sym (tap-dance $tt (XX @lsw-sym))
+  n-mou (tap-dance $tt (XX @lsw-mou))
+  n-fun (tap-dance $tt (XX @lsw-fun))
+  n-med (tap-dance $tt (XX @lsw-med))
+
+  ;; aliases for COPY/PASTE/etc (macro so norepeat)
+  copy  (macro C-ins)
+  paste (macro S-ins)
+  cut   (macro S-del)
+  undo  (macro C-z)
+  redo  (macro C-y)
+
+  ;; symbols to be handied by OS
+  s-eml (on-press-fakekey fake-hyper-a tap)
+  s-btc (on-press-fakekey fake-hyper-b tap)
+  s-eur (on-press-fakekey fake-hyper-c tap)
+  s-tm  (on-press-fakekey fake-hyper-d tap)
+  s-hyE (on-press-fakekey fake-hyper-e tap)
+  s-hyF (on-press-fakekey fake-hyper-f tap)
+  s-hyG (on-press-fakekey fake-hyper-g tap)
+  s-hyH (on-press-fakekey fake-hyper-h tap)
+  s-hyI (on-press-fakekey fake-hyper-i tap)
+  s-hyJ (on-press-fakekey fake-hyper-j tap)
+  s-hyK (on-press-fakekey fake-hyper-k tap)
+)
+
+;; U_BAS: Chords for home row and more:
+(defchords bas-chords 500
+  ;; t + n = caps-word (two shifts)
+  (kt kn) @capw
+  ;;
+  ;; Undo/Cut/Copy/Paste
+  (kz            ) @but-z
+  (   kx         ) @ralt-x
+  (      kc      ) c
+  (         kd   ) d
+  (            kv) v
+  (kz kx         ) @undo
+  (   kx kc      ) @cut
+  (      kc kd   ) @copy
+  (         kd kv) @paste
+  ;;
+  ;; home-row-mod chords (so that rolls don't cause problems)
+  ;; left half
+  ;; single keys
+  (ka               ) a
+  (   kr            ) r
+  (      ks         ) s
+  (         kt      ) t
+  ;; single keys at home-row-mods
+  (ka          k-spc) @met-a
+  (   kr       k-spc) @alt-r
+  (      ks    k-spc) @ctl-s
+  (         kt k-spc) @sft-t
+  (            k-spc) @spc-nav
+  ;; combos of two
+  (ka kr       k-spc) (multi lmet lalt)
+  (ka    ks    k-spc) (multi lmet lctl)
+  (ka       kt k-spc) (multi lmet lsft)
+  (   kr ks    k-spc) (multi lalt lctl)
+  (   kr    kt k-spc) (multi lalt lsft)
+  (      ks kt k-spc) (multi lctl lsft)
+  ;; combos of three
+  (ka kr ks    k-spc) (multi lmet lalt lctl)
+  (ka kr    kt k-spc) (multi lmet lalt lsft)
+  (ka    ks kt k-spc) (multi lmet lctl lsft)
+  (   kr ks kt k-spc) (multi lalt lctl lsft)
+  ;; right half
+  ;; single keys
+  (kn               ) n
+  (   ke            ) e
+  (      ki         ) i
+  (         ko      ) o
+  (            k-ret) @ret-num
+  (kn          k-ret) @sft-n
+  (   ke       k-ret) @ctl-e
+  (      ki    k-ret) @alt-i
+  (         ko k-ret) @met-o
+  ;; combos of two
+  (kn ke       k-ret) (multi lsft lctl)
+  (kn    ki    k-ret) (multi lsft lalt)
+  (kn       ko k-ret) (multi lsft lmet)
+  (   ke ki    k-ret) (multi lctl lalt)
+  (   ke    ko k-ret) (multi lctl lsft)
+  (      ki ko k-ret) (multi lalt lmet)
+  ;; combos of three
+  (kn ke ki    k-ret) (multi lsft lctl lalt)
+  (kn ke    ko k-ret) (multi lsft lctl lmet)
+  (kn    ki ko k-ret) (multi lsft lalt lmet)
+  (   ke ki ko k-ret) (multi lctl lalt lmet)
+)
+(defalias
+  ;; caps-word(for 3 sec) or caps
+  capw    (tap-dance $tt ((caps-word 3000) caps))
+  ;; left half
+  ;; first row
+  bas-q   q
+  bas-w   w
+  bas-f   f
+  bas-p   p
+  bas-b   b
+  ;;second row
+  bas-a   (chord bas-chords ka)
+  bas-r   (chord bas-chords kr)
+  bas-s   (chord bas-chords ks)
+  bas-t   (chord bas-chords kt)
+  bas-g g
+  ;; third row
+  ;; keys z/x/c/d/v for undo/cut/copy/paste
+  bas-z   (chord bas-chords kz)
+  bas-x   (chord bas-chords kx)
+  bas-c   (chord bas-chords kc)
+  bas-d   (chord bas-chords kd)
+  bas-v   (chord bas-chords kv)
+  ;; thumbs
+  bas-spc (chord bas-chords k-spc)
+  ;; right half
+  ;; first row
+  bas-j   j
+  bas-l   l
+  bas-u   u
+  bas-y   y
+  ;; double-tap ' to get :
+  bas-'   (tap-dance $tt (' scln))
+  ;; second row
+  bas-m   m
+  bas-n   (chord bas-chords kn)
+  bas-e   (chord bas-chords ke)
+  bas-i   (chord bas-chords ki)
+  bas-o   (chord bas-chords ko)
+  ;; third row
+  bas-k   k
+  bas-h   h
+  bas-,   ,
+  bas-.   @ralt-.
+  bas-/   @but-/
+  ;; thumbs
+  bas-ret (chord bas-chords k-ret)
+)
+
+#| main layout: Colemac-DH with extra keys:
+ home-row modifiers:
+  MACS/WACS
+ extra:
+   z or / => button layer
+   x or . => right alt
+
+ thumb special layer mappings - left side:
+ (left-to-right):
+
+ esc       => media
+ space     => navigation
+ tab       => mouse
+
+ thumb special layer mappings - right side:
+ (left-to-right):
+
+ backspace => symbols
+ enter     => numbers
+ delete    => functions
+|#
+
+(deflayer U_BASE
+  ;; left
+  @bas-q  @bas-w  @bas-f  @bas-p  @bas-b
+  @bas-a  @bas-r  @bas-s  @bas-t  @bas-g
+  @bas-z  @bas-x  @bas-c  @bas-d  @bas-v
+  @esc-med        @bas-spc        @tab-mou
+  ;; right
+  @bas-j  @bas-l  @bas-u  @bas-y  @bas-'
+  @bas-m  @bas-n  @bas-e  @bas-i  @bas-o
+  @bas-k  @bas-h  @bas-,  @bas-.  @bas-/
+  @bks-sym        @bas-ret        @del-fun
+
+)
+
+;; we use QWERTY layer with home-row modifiers and button+right alt
+;; to allow proper Cyrillic mapping
+;;
+;; here are some hacks:
+;; ъ is double-tapped ь
+;; ё is double-tapped е
+;; э is triple-tapped е
+(defalias
+  ;; cyrillic е/э/ё
+  cyr-eee (tap-dance $tt (t ' grv))
+  ;; cyrillic ь/ъ
+  cyr-soft (tap-dance $tt (m ]))
+  ;; for {[()]} -- TBD
+)
+
+;; U_QWERTY: Chords for home row and more:
+(defchords qwe-chords 500
+  ;; f + j = caps-word (two shifts)
+  (qf qj) @capw
+  ;;
+  ;; Undo/Cut/Copy/Paste
+  (qz            ) @but-z
+  (   qx         ) @ralt-x
+  (      qc      ) c
+  (         qv   ) v
+  (            qb) b
+  (qz qx         ) @undo
+  (   qx qc      ) @cut
+  (      qc qv   ) @copy
+  (         qv qb) @paste
+  ;;
+  ;; home-row-mod chords (so that rolls don't cause problems)
+  ;; left half
+  (qa               ) a
+  (   qs            ) s
+  (      qd         ) d
+  (         qf      ) f
+  (            q-spc) @spc-nav
+  (qa          q-spc) @met-a
+  (   qs       q-spc) @alt-s
+  (      qd    q-spc) @ctl-d
+  (         qf q-spc) @sft-f
+  ;; right half
+  (qj               ) j
+  (   qk            ) k
+  (      ql         ) l
+  (         q;      ) ;
+  (            q-ret) @ret-num
+  (qj          q-ret) @sft-j
+  (   qk       q-ret) @ctl-k
+  (      ql    q-ret) @alt-l
+  (         q; q-ret) @met-;
+)
+(defalias
+  ;; left half
+  ;; first row
+  qwe-q   q
+  qwe-w   w
+  qwe-e   e
+  qwe-r   r
+  qwe-t   @cyr-eee
+  ;; second row
+  qwe-a   (chord qwe-chords qa)
+  qwe-s   (chord qwe-chords qs)
+  qwe-d   (chord qwe-chords qd)
+  qwe-f   (chord qwe-chords qf)
+  qwe-g   g
+  ;; third row
+  qwe-z   (chord qwe-chords qz)
+  qwe-x   (chord qwe-chords qx)
+  qwe-c   (chord qwe-chords qc)
+  qwe-v   (chord qwe-chords qv)
+  qwe-b   (chord qwe-chords qb)
+  ;; thumbs
+  qwe-spc (chord qwe-chords q-spc)
+  ;; right half
+  ;; first row
+  qwe-y   y
+  qwe-u   u
+  qwe-i   i
+  qwe-o   o
+  qwe-p   p
+  ;; second row
+  qwe-h   h
+  qwe-j   (chord qwe-chords qj)
+  qwe-k   (chord qwe-chords qk)
+  qwe-l   (chord qwe-chords ql)
+  qwe-;   (chord qwe-chords q;)
+  ;; third row
+  qwe-n   n
+  qwe-m   @cyr-soft
+  qwe-,   ,
+  qwe-.   .
+  qwe-/   @but-z
+  ;; thumbs
+  qwe-ret (chord qwe-chords q-ret)
+)
+
+(deflayer U_QWERTY
+  ;; left
+  @qwe-q  @qwe-w  @qwe-e  @qwe-r  @qwe-t
+  @qwe-a  @qwe-s  @qwe-d  @qwe-f  @qwe-g
+  @qwe-z  @qwe-x  @qwe-c  @qwe-v  @qwe-b
+  @esc-med        @qwe-spc        @tab-mou
+  ;; right
+  @qwe-y  @qwe-u  @qwe-i  @qwe-o  @qwe-p
+  @qwe-h  @qwe-j  @qwe-k  @qwe-l  @qwe-;
+  @qwe-n  @qwe-m  @qwe-,  @qwe-.  @qwe-/
+  @bks-sym        @qwe-ret        @del-fun
+)
+
+(deflayer U_TAP
+  ;; left
+  q       w       f       p       b
+  a       r       s       t       g
+  z       x       c       d       v
+  @esc-med        spc             tab
+  ;; right
+  j       l       u       y       '
+  m       n       e       i       o
+  k       h       ,       .       /
+  ent             bspc            del
+)
+
+(deflayer U_NUM
+  ;; left
+  @lbrack 7       8       9       @rbrack
+  ;       4       5       6       =
+  grave   1       2       3       bksl
+  .               0               -
+  ;; right
+  XX      XX      XX      XX      XX
+  XX      sft     ctl     alt     met
+  XX      XX      XX      XX      XX
+  XX              XX              XX
+)
+
+ ;; this is just shifter S_NUM
+(deflayer U_SYM
+  ;; left
+  @lbrace S-7     S-8     @lparen @rbrace
+  S-scln  S-4     S-5     S-6     +
+  S-grave S-1     S-2     S-3     S-bksl
+  @lparen         @rparen         _
+  ;; right
+  XX      XX      XX      XX      XX
+  XX      lsft    lctl    lalt    lmet
+  XX      XX      XX      XX      XX
+  XX              XX              XX
+)
+
+(deflayer U_FUN
+  ;; left
+  f12     f7      f8      f9      prtsc
+  f11     f4      f5      f6      slck
+  f10     f1      f2      f3      pause
+  comp            spc             tab
+  ;; right
+  XX      @n-bas  @n-qwe  @n-tap  XX
+  XX      sft     ctl     alt     met
+  XX      @n-fun  @n-med  ralt    XX
+  XX              XX              XX
+
+)
+
+(defalias
+  ;; M+C+A key defined here
+  nav-d (multi rmet rctl lalt)
+  ;; here we switch windows but first switch language to ENG
+  nav-. @wbw
+  nav-/ @wfw
+)
+(deflayer U_NAV
+  ;; left
+  ;; added keys ([{}]) for VIM navigation
+  lrld    @n-tap  @n-qwe  @n-bas  @lbrace
+  met     alt     ctl     sft     @lbrack
+  XX      XX      XX      @nav-d  @lparen
+  XX              XX              XX
+  ;; right
+  @rbrace home    up      end     pgup
+  @rbrack left    down    right   pgdn
+  @rparen C-S-tab C-tab   @nav-.  @nav-/
+  bspc            ent             del
+)
+
+(deflayer U_BUTTON
+  ;; left
+  @s-eml  @s-btc  @s-eur  @s-tm   @s-hyE
+  met     alt     ctl     sft     @s-hyF
+  @s-hyG  @s-hyH  @s-hyI  @s-hyJ  @s-hyK
+  mmtp            mltp            mrtp
+  ;; right
+  @redo   @paste  @cut    @copy   @undo
+  XX      sft     ctl     alt     met
+  @redo   @paste  @cut    @copy   @undo
+  mrtp            mltp            mmtp
+)
+
+;; some aliases for the mouse
+(defalias
+  mwu (mwheel-up 500 120)
+  mwd (mwheel-down 500 120)
+  mwl (mwheel-left 50 120)
+  mwr (mwheel-right 50 120)
+
+  ms↑ (movemouse-up 1 1)
+  ms← (movemouse-left 1 1)
+  ms↓ (movemouse-down 1 1)
+  ms→ (movemouse-right 1 1)
+
+  ma↑ (movemouse-accel-up 1 1000 1 5)
+  ma← (movemouse-accel-left 1 1000 1 5)
+  ma↓ (movemouse-accel-down 1 1000 1 5)
+  ma→ (movemouse-accel-right 1 1000 1 5)
+
+  sm (setmouse 32228 32228)
+
+  fst (movemouse-speed 200)
+)
+
+(deflayer U_MOUSE
+  ;; left half
+  XX      @n-tap  @n-qwe  @n-bas  XX
+  met     alt     ctl     sft     XX
+  XX      XX      XX      XX      XX
+  ;; thumbs
+  XX              XX              XX
+  ;; right half
+  @eng    XX      @ms↑    XX      @mwu
+  @rus    @ms←    @ms↓    @ms→    @mwd
+  XX      XX      XX      XX      XX
+  ;; thumbs - r/l/m mouse tapt (as opposed to clicks)
+  mrtp            mltp            mmtp
+)
+
+(deflayer U_MEDIA
+  ;; left
+  XX      @n-tap  @n-qwe  @n-bas  XX
+  met     alt     ctl     sft     XX
+  XX      XX      XX      XX      XX
+  XX              XX              XX
+  ;; right
+  XX      XX      XX      XX      XX
+  XX      prev    vold    volu    next
+  XX      XX      XX      XX      XX
+  stopcd          pp              mute
+)
