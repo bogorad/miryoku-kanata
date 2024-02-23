@@ -42,7 +42,7 @@ Notable changes from Miryoku/Kinesis:
 =====================================
 1. U_BASE:
 1.1. Considered removing mod-taps, removed for now,
-     using thumb-chords (e.g., lfst is spc+t
+     using thumb-chords (e.g., lfst is ent+t
 1.2. Added some chords
 1.3. Swapped ENTER and BACKSPACE
 
@@ -66,7 +66,11 @@ Notable changes from Miryoku/Kinesis:
      where U_TAP/U_QWERTY/U_BASE switching is possible
 3.5. Threw away copy/cut/paste, use chords in U_BASE nstead.
 
-Here'a an empty layer declaration, 
+9. U_SYM was revised completely. Followed the advice
+   to keep !@#$%^&*() to use existing muscle memory.
+   Added more keys. Mapped / to \. TBD
+
+Here'a an empty layer declaration,
 so we can copy+paste it and customize
 
 (deflayer U_NEW
@@ -128,10 +132,10 @@ so we can copy+paste it and customize
 #|
 This section is here because of the way Kanata processes
 events. The idea is that FakeKeys make an action atomic,
-so it can be serialized via (macro fake1 fake2 fake3).
+so it can be serialized via (macro fake real whatever)
 |#
 (deffakekeys
-  ;; win-input swithing - add more here
+  ;; win-input switching - add more here
   fake-win-eng (multi lalt lsft 0)
   fake-win-rus (multi lalt lsft 1)
   ;;
@@ -147,17 +151,17 @@ so it can be serialized via (macro fake1 fake2 fake3).
   fake-lsw-sym (layer-switch U_SYM)
   ;;
   ;; symbols to be handied by OS
-  fake-hyper-a (multi rmet rctl alt a)
-  fake-hyper-b (multi rmet rctl alt b)
-  fake-hyper-c (multi rmet rctl alt c)
-  fake-hyper-d (multi rmet rctl alt d)
-  fake-hyper-e (multi rmet rctl alt e)
-  fake-hyper-f (multi rmet rctl alt f)
-  fake-hyper-g (multi rmet rctl alt g)
-  fake-hyper-h (multi rmet rctl alt h)
-  fake-hyper-i (multi rmet rctl alt i)
-  fake-hyper-j (multi rmet rctl alt j)
-  fake-hyper-k (multi rmet rctl alt k)
+  fake-hyper-a (multi rmet rctl lalt a)
+  fake-hyper-b (multi rmet rctl lalt b)
+  fake-hyper-c (multi rmet rctl lalt c)
+  fake-hyper-d (multi rmet rctl lalt d)
+  fake-hyper-e (multi rmet rctl lalt e)
+  fake-hyper-f (multi rmet rctl lalt f)
+  fake-hyper-g (multi rmet rctl lalt g)
+  fake-hyper-h (multi rmet rctl lalt h)
+  fake-hyper-i (multi rmet rctl lalt i)
+  fake-hyper-j (multi rmet rctl lalt j)
+  fake-hyper-k (multi rmet rctl lalt k)
 )
 ;; shorter names for fake keys etc
 (defalias
@@ -171,15 +175,13 @@ so it can be serialized via (macro fake1 fake2 fake3).
   lsw-qwe (on-press-fakekey fake-lsw-qwe tap)
   lsw-tap (on-press-fakekey fake-lsw-tap tap)
   lsw-sym (on-press-fakekey fake-lsw-sym tap)
-  ;; shorter names for win-input swithing
+  ;; shorter names for input swithing in Windows
   win-eng (on-press-fakekey fake-win-eng tap)
   win-rus (on-press-fakekey fake-win-rus tap)
-  ;; aliases for keyboard switching
+  ;; aliases for keyboard switching:
+  ;; switch layer, inform Windows
   eng (macro @lsw-bas @win-eng)
   rus (macro @lsw-qwe @win-rus)
-  ;; Windows back/forward, while switching to English
-  wbw (macro @lsw-bas @win-eng A-S-tab)
-  wfw (macro @lsw-bas @win-eng A-tab)
 )
 
 ;; aliases - so we can use short labels in layer maps
@@ -196,13 +198,13 @@ so it can be serialized via (macro fake1 fake2 fake3).
   ;;
   ;; tap-hold actions for thumb keys
   ;; left (left-2-right order)
-  esc-med   (tap-hold-press $tt $ht esc @lwh-med)
-  spc-nav   (tap-hold-press $tt 120 spc @lwh-nav)
+  bks-med   (tap-hold-press $tt $ht bks @lwh-med)
+  esc-nav   (tap-hold-press $tt $ht esc @lwh-nav)
   tab-mou   (tap-hold-press $tt $ht tab @lwh-mou)
   ;; right (left-2-right order)
-  bks-sym   (tap-hold-press $tt $ht bks @lwh-sym)
+  del-sym   (tap-hold-press $tt $ht del @lwh-sym)
   ret-num   (tap-hold-press $tt $ht ret @lwh-num)
-  del-fun   (tap-hold-press $tt $ht del @lwh-fun)
+  spc-fun   (tap-hold-press $tt $ht spc @lwh-fun)
 
   ;; home row modifiers
   ;; first - for U_BASE
@@ -236,19 +238,56 @@ so it can be serialized via (macro fake1 fake2 fake3).
   ;; right/grey alt (do I need it?)
   ralt-x    (tap-hold-press $tt $ht x ralt)
   ralt-.    (tap-hold-press $tt $ht . ralt)
+)
 
-  ;; UNICODE
-  sml  (unicode 😀)
-  sad  (unicode 🙁)
-  euro (unicode €)
+#|
+UNICODE section
+
+Since I'm using two layouts:
+- US_Eng/Cloemak-DH-matrix
+- Russian
+
+There's an inconsistency befweet shifted symbols.
+So to always get the same symbols regardless of the
+layout, I switched almost everything to UNICODE.
+
+|#
+(defalias
+  ;; 1-5
+  exclam (unicode !)
+  atcomm (unicode @)
+  hash   (unicode #)
+  dollar (unicode $)
+  percen (unicode %)
+  ;; 6-0
+  caret  (unicode ^)
+  ampers (unicode &)
+  star   (unicode *)
+  lparen (macro S-9)
+  rparen (macro S-0)
   ;; {[()]}
   lbrace (unicode {)
   rbrace (unicode })
   lbrack (unicode [)
   rbrack (unicode ])
-  lparen S-9
-  rparen S-0
+  ;; extra
+  grave  (unicode `)
+  tilde  (unicode ~)
+  slash  (unicode /)
+  backsl (unicode \)
+  semicl (unicode ;)
+  colon  (unicode :)
+  dot    (unicode .)
+  pipe   (unicode |)
+  plus   (unicode +)
+  minus  (unicode -)
+  unders (unicode _)
+  equals (unicode =)
+  ;;
+  euro   (unicode €)
+)
 
+(defalias
   ;; aliases for secondary layers:
   ;;   no-key / permanent layer-switch
   ;; EXPLANATION:
@@ -319,7 +358,7 @@ so it can be serialized via (macro fake1 fake2 fake3).
   (   kr       k-spc) @alt-r
   (      ks    k-spc) @ctl-s
   (         kt k-spc) @sft-t
-  (            k-spc) @spc-nav
+  (            k-spc) @esc-nav
   ;; combos of two
   (ka kr       k-spc) (multi lmet lalt)
   (ka    ks    k-spc) (multi lmet lctl)
@@ -338,11 +377,11 @@ so it can be serialized via (macro fake1 fake2 fake3).
   (   kl            ) l
   (      ku         ) u
   (         ky      ) y
-  (            k'   ) (tap-dance $tt ( ' (macro scln)))
+  (            k'   ) '
   (kn               ) n
   (   ke            ) e
   (      ki         ) i
-  (         ko      ) o
+  (         ko      ) (tap-dance $tt (o (unicode :)))
   (            kg   ) g
   (kk               ) k
   (   kh            ) h
@@ -443,12 +482,12 @@ so it can be serialized via (macro fake1 fake2 fake3).
   @bas-q  @bas-w  @bas-f  @bas-p  @bas-b
   @bas-a  @bas-r  @bas-s  @bas-t  @bas-g
   @bas-z  @bas-x  @bas-c  @bas-d  @bas-v
-  @esc-med        @bas-spc        @tab-mou
+  @bks-med        @bas-spc        @tab-mou
   ;; right
   @bas-j  @bas-l  @bas-u  @bas-y  @bas-'
   @bas-m  @bas-n  @bas-e  @bas-i  @bas-o
   @bas-k  @bas-h  @bas-,  @bas-.  @bas-/
-  @bks-sym        @bas-ret        @del-fun
+  @del-sym        @bas-ret        @spc-fun
 
 )
 
@@ -489,7 +528,7 @@ so it can be serialized via (macro fake1 fake2 fake3).
   (   qs            ) s
   (      qd         ) d
   (         qf      ) f
-  (            q-spc) @spc-nav
+  (            q-spc) @esc-nav
   (qa          q-spc) @met-a
   (   qs       q-spc) @alt-s
   (      qd    q-spc) @ctl-d
@@ -498,7 +537,7 @@ so it can be serialized via (macro fake1 fake2 fake3).
   (qj               ) j
   (   qk            ) k
   (      ql         ) l
-  (         q;      ) ;
+  (         q;      ) (tap-dance $tt (; (unicode :)))
   (            q-ret) @ret-num
   (qj          q-ret) @sft-j
   (   qk       q-ret) @ctl-k
@@ -555,12 +594,12 @@ so it can be serialized via (macro fake1 fake2 fake3).
   @qwe-q  @qwe-w  @qwe-e  @qwe-r  @qwe-t
   @qwe-a  @qwe-s  @qwe-d  @qwe-f  @qwe-g
   @qwe-z  @qwe-x  @qwe-c  @qwe-v  @qwe-b
-  @esc-med        @qwe-spc        @tab-mou
+  @bks-med        @qwe-spc        @tab-mou
   ;; right
   @qwe-y  @qwe-u  @qwe-i  @qwe-o  @qwe-p
   @qwe-h  @qwe-j  @qwe-k  @qwe-l  @qwe-;
   @qwe-n  @qwe-m  @qwe-,  @qwe-.  @qwe-/
-  @bks-sym        @qwe-ret        @del-fun
+  @del-sym        @qwe-ret        @spc-fun
 )
 
 (deflayer U_TAP
@@ -568,7 +607,7 @@ so it can be serialized via (macro fake1 fake2 fake3).
   q       w       f       p       b
   a       r       s       t       g
   z       x       c       d       v
-  @esc-med        spc             tab
+  @bks-med        spc             tab
   ;; right
   j       l       u       y       '
   m       n       e       i       o
@@ -579,27 +618,27 @@ so it can be serialized via (macro fake1 fake2 fake3).
 (deflayer U_NUM
   ;; left
   @lbrack 7       8       9       @rbrack
-  ;       4       5       6       =
-  grave   1       2       3       bksl
-  .               0               -
+  @semicl 4       5       6       @equals
+  @grave  1       2       3       @backsl
+  @dot            0               -
   ;; right
   XX      XX      XX      XX      XX
-  XX      sft     ctl     alt     met
-  XX      XX      XX      XX      XX
+  ret     sft     ctl     alt     met
+  bspc    spc     tab     @dot    @slash
   XX              XX              XX
 )
 
  ;; this is just shifter S_NUM
 (deflayer U_SYM
   ;; left
-  @lbrace S-7     S-8     @lparen @rbrace
-  S-scln  S-4     S-5     S-6     +
-  S-grave S-1     S-2     S-3     S-bksl
-  @lparen         @rparen         _
+  @exclam @atcomm @hash   @dollar @percen
+  @semicl @colon  @equals @minus  @plus
+  @tilde  @euro   XX      XX      @pipe
+  @lparen         @rparen         @unders
   ;; right
-  XX      XX      XX      XX      XX
+  @caret  @ampers @star   @lparen @rparen
   XX      lsft    lctl    lalt    lmet
-  XX      XX      XX      XX      XX
+  XX      spc     tab     bspc    @backsl
   XX              XX              XX
 )
 
@@ -609,32 +648,38 @@ so it can be serialized via (macro fake1 fake2 fake3).
   f11     f4      f5      f6      slck
   f10     f1      f2      f3      pause
   comp            spc             tab
-  ;; right
+  ;; rightRT_BUS
   XX      @n-bas  @n-qwe  @n-tap  XX
-  XX      sft     ctl     alt     met
-  XX      @n-fun  @n-med  ralt    XX
+  ret     sft     ctl     alt     met
+  bspc    spc     tab     .       /
   XX              XX              XX
 
 )
 
 (defalias
+  ;; live config reload
+  nav-q lrld
   ;; M+C+A key defined here
   nav-d (multi rmet rctl lalt)
-  ;; here we switch windows but first switch language to ENG
-  nav-. @wbw
-  nav-/ @wfw
+  ;; left-most row
+  ;; Tabs back/forward, while switching to English
+  nav-h (macro A-S-tab @win-eng @lsw-bas)
+  nav-, (macro A-tab   @win-eng @lsw-bas)
+  ;; Windows back/forward, while switching to English
+  nav-. (macro A-S-esc @win-eng @lsw-bas)
+  nav-/ (macro A-esc   @win-eng @lsw-bas)
 )
 (deflayer U_NAV
   ;; left
   ;; added keys ([{}]) for VIM navigation
-  lrld    @n-tap  @n-qwe  @n-bas  @lbrace
+  @nav-q  @n-tap  @n-qwe  @n-bas  @lbrace
   met     alt     ctl     sft     @lbrack
   XX      XX      XX      @nav-d  @lparen
   XX              XX              XX
   ;; right
   @rbrace home    up      end     pgup
   @rbrack left    down    right   pgdn
-  @rparen C-S-tab C-tab   @nav-.  @nav-/
+  @rparen @nav-h  @nav-,  @nav-.  @nav-/
   bspc            ent             del
 )
 
@@ -678,8 +723,8 @@ so it can be serialized via (macro fake1 fake2 fake3).
 ;; ON  when the key is pressed
 ;; OFF when it's released
 (deffakekeys
-  micon  (cmd vmcli Strip[0].A1=1)
-  micoff (cmd vmcli Strip[0].A1=0)
+  micon  (cmd vmcli Strip[1].Gate=3 Strip[1].A1=1)
+  micoff (cmd vmcli Strip[1].Gate=7.4 Strip[1].A1=0)
 )
 (defalias
   miconoff (multi
