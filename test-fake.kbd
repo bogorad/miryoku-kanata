@@ -1,0 +1,25 @@
+(defcfg
+  process-unmapped-keys yes
+  danger-enable-cmd yes
+)
+
+
+(defsrc
+  q 
+)
+
+(deflayer use-fake-keys
+  @miconoff
+)
+
+(defalias
+  miconoff (multi
+    (on-press-fakekey   micon  tap)
+    (on-release-fakekey micoff tap)
+  )
+)
+
+(deffakekeys
+  micon  (cmd vmcli Strip[0].A1=1)
+  micoff (cmd vmcli Strip[0].A1=0)
+)

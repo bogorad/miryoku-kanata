@@ -197,7 +197,7 @@ so it can be serialized via (macro fake1 fake2 fake3).
   ;; tap-hold actions for thumb keys
   ;; left (left-2-right order)
   esc-med   (tap-hold-press $tt $ht esc @lwh-med)
-  spc-nav   (tap-hold-press $tt 150 spc @lwh-nav)
+  spc-nav   (tap-hold-press $tt 120 spc @lwh-nav)
   tab-mou   (tap-hold-press $tt $ht tab @lwh-mou)
   ;; right (left-2-right order)
   bks-sym   (tap-hold-press $tt $ht bks @lwh-sym)
@@ -287,13 +287,13 @@ so it can be serialized via (macro fake1 fake2 fake3).
 )
 
 ;; U_BAS: Chords for home row and more:
-(defchords bas-chords 500
+(defchords bas-chords 300
   ;; t + n = caps-word (two shifts)
   (kt kn) @capw
   ;;
   ;; Undo/Cut/Copy/Paste
   (kz            ) @but-z
-  (   kx         ) @ralt-x
+  (   kx         ) x
   (      kc      ) c
   (         kd   ) d
   (            kv) v
@@ -305,6 +305,11 @@ so it can be serialized via (macro fake1 fake2 fake3).
   ;; home-row-mod chords (so that rolls don't cause problems)
   ;; left half
   ;; single keys
+  (kq               ) q
+  (   kw            ) w
+  (      kf         ) f
+  (         kp      ) p
+  (            kb   ) b
   (ka               ) a
   (   kr            ) r
   (      ks         ) s
@@ -329,10 +334,21 @@ so it can be serialized via (macro fake1 fake2 fake3).
   (   kr ks kt k-spc) (multi lalt lctl lsft)
   ;; right half
   ;; single keys
+  (kj               ) j
+  (   kl            ) l
+  (      ku         ) u
+  (         ky      ) y
+  (            k'   ) (tap-dance $tt ( ' (macro scln)))
   (kn               ) n
   (   ke            ) e
   (      ki         ) i
   (         ko      ) o
+  (            kg   ) g
+  (kk               ) k
+  (   kh            ) h
+  (      k,         ) ,
+  (         k.      ) @ralt-.
+  (            k/   ) @but-/
   (            k-ret) @ret-num
   (kn          k-ret) @sft-n
   (   ke       k-ret) @ctl-e
@@ -356,17 +372,17 @@ so it can be serialized via (macro fake1 fake2 fake3).
   capw    (tap-dance $tt ((caps-word 3000) caps))
   ;; left half
   ;; first row
-  bas-q   q
-  bas-w   w
-  bas-f   f
-  bas-p   p
-  bas-b   b
+  bas-q   (chord bas-chords kq)
+  bas-w   (chord bas-chords kw)
+  bas-f   (chord bas-chords kf)
+  bas-p   (chord bas-chords kp)
+  bas-b   (chord bas-chords kb)
   ;;second row
   bas-a   (chord bas-chords ka)
   bas-r   (chord bas-chords kr)
   bas-s   (chord bas-chords ks)
   bas-t   (chord bas-chords kt)
-  bas-g g
+  bas-g   (chord bas-chords kg)
   ;; third row
   ;; keys z/x/c/d/v for undo/cut/copy/paste
   bas-z   (chord bas-chords kz)
@@ -378,12 +394,12 @@ so it can be serialized via (macro fake1 fake2 fake3).
   bas-spc (chord bas-chords k-spc)
   ;; right half
   ;; first row
-  bas-j   j
-  bas-l   l
-  bas-u   u
-  bas-y   y
+  bas-j   (chord bas-chords kj)
+  bas-l   (chord bas-chords kl)
+  bas-u   (chord bas-chords ku)
+  bas-y   (chord bas-chords ky)
   ;; double-tap ' to get :
-  bas-'   (tap-dance $tt (' scln))
+  bas-'   (chord bas-chords k')
   ;; second row
   bas-m   m
   bas-n   (chord bas-chords kn)
@@ -391,11 +407,11 @@ so it can be serialized via (macro fake1 fake2 fake3).
   bas-i   (chord bas-chords ki)
   bas-o   (chord bas-chords ko)
   ;; third row
-  bas-k   k
-  bas-h   h
-  bas-,   ,
-  bas-.   @ralt-.
-  bas-/   @but-/
+  bas-k   (chord bas-chords kk)
+  bas-h   (chord bas-chords kh)
+  bas-,   (chord bas-chords k,)
+  bas-.   (chord bas-chords k.)
+  bas-/   (chord bas-chords k/)
   ;; thumbs
   bas-ret (chord bas-chords k-ret)
 )
@@ -657,6 +673,21 @@ so it can be serialized via (macro fake1 fake2 fake3).
   fst (movemouse-speed 200)
 )
 
+;; this tells VoiceMeeter to 
+;; turn mice passthrough to headphones
+;; ON  when the key is pressed
+;; OFF when it's released
+(deffakekeys
+  micon  (cmd vmcli Strip[0].A1=1)
+  micoff (cmd vmcli Strip[0].A1=0)
+)
+(defalias
+  miconoff (multi
+    (on-press-fakekey   micon  tap)
+    (on-release-fakekey micoff tap)
+  )
+)
+
 (deflayer U_MOUSE
   ;; left half
   XX      @n-tap  @n-qwe  @n-bas  XX
@@ -675,12 +706,12 @@ so it can be serialized via (macro fake1 fake2 fake3).
 (deflayer U_MEDIA
   ;; left
   XX      @n-tap  @n-qwe  @n-bas  XX
-  met     alt     ctl     sft     XX
+  XX      XX      XX      XX      XX
   XX      XX      XX      XX      XX
   XX              XX              XX
   ;; right
   XX      XX      XX      XX      XX
-  XX      prev    vold    volu    next
+  prev    vold    volu    next    @miconoff
   XX      XX      XX      XX      XX
   stopcd          pp              mute
 )
