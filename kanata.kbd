@@ -41,8 +41,11 @@ About layers:
 Notable changes from Miryoku/Kinesis:
 =====================================
 1. U_BASE:
-1.1. Considered removing mod-taps, removed for now,
-     using thumb-chords (e.g., lfst is ent+t
+1.1. Removed mod-taps, using thumb-chords
+1.1.1. All keys in U_BASE are mapped to chords.
+1.1.2. When a key is pressed, it iks passed to chords.
+1.1.3. Chord decides if it's a single key (e.g., @met-a which is a/meta),
+1.1.4. or a chors - then ????????????????
 1.2. Added some chords
 1.3. Swapped ENTER and BACKSPACE
 
@@ -86,6 +89,8 @@ so we can copy+paste it and customize
   XX      XX      XX      XX      XX
   ;; thumbs
   XX              XX              XX
+  ;; extra keys - not actually used, needed to intercept events
+  XX
 )
 
 |#
@@ -127,6 +132,8 @@ so we can copy+paste it and customize
   h       j       k       l       ;
   n       m       ,       .       /
   pgdn            ent             spc
+  ;; extra keys - not actually used, needed to intercept events
+  lctrl
 )
 
 #|
@@ -195,6 +202,7 @@ so it can be serialized via (macro fake real whatever)
   lwh-med   (layer-while-held U_MEDIA)
   lwh-mou   (layer-while-held U_MOUSE)
   lwh-sym   (layer-while-held U_SYM)
+  lwh-ctl   (layer-while-held U_CTL)
   ;;
   ;; tap-hold actions for thumb keys
   ;; left (left-2-right order)
@@ -206,18 +214,19 @@ so it can be serialized via (macro fake real whatever)
   ret-num   (tap-hold-press $tt $ht ret @lwh-num)
   spc-fun   (tap-hold-press $tt $ht spc @lwh-fun)
 
-  ;; home row modifiers
+  ;; home row modifiers -- currently unused,
+  ;; using chords instead
   ;; first - for U_BASE
   ;; left
-  met-a     (tap-hold-press $tt $ht a lmeta)
-  alt-r     (tap-hold-press $tt $ht r lalt)
-  ctl-s     (tap-hold-press $tt $ht s lctl)
-  sft-t     (tap-hold-press $tt $ht t lsft)
-  ;; right
-  sft-n     (tap-hold-press $tt $ht n lsft)
-  ctl-e     (tap-hold-press $tt $ht e lctl)
-  alt-i     (tap-hold-press $tt $ht i lalt)
-  met-o     (tap-hold-press $tt $ht o lmet)
+;;  met-a     (tap-hold-press $tt $ht a lmeta)
+;;  alt-r     (tap-hold-press $tt $ht r lalt)
+;;  ctl-s     (tap-hold-press $tt $ht s lctl)
+;;  sft-t     (tap-hold-press $tt $ht t lsft)
+;;  ;; right
+;;  sft-n     (tap-hold-press $tt $ht n lsft)
+;;  ctl-e     (tap-hold-press $tt $ht e lctl)
+;;  alt-i     (tap-hold-press $tt $ht i lalt)
+;;  met-o     (tap-hold-press $tt $ht o lmet)
   ;;
   ;; second for U_QWERTY
   ;; left
@@ -234,7 +243,6 @@ so it can be serialized via (macro fake real whatever)
 
   ;; button layer activation
   but-z     (tap-hold-press $tt $ht z @lwh-but)
-  but-/     (tap-hold-press $tt $ht / @lwh-but)
   ;; right/grey alt (do I need it?)
   ralt-x    (tap-hold-press $tt $ht x ralt)
   ralt-.    (tap-hold-press $tt $ht . ralt)
@@ -274,15 +282,17 @@ layout, I switched almost everything to UNICODE.
   grave  (unicode `)
   tilde  (unicode ~)
   slash  (unicode /)
-  backsl (unicode \)
+  backsl (multi (unicode \) (macro 10 f24))
   semicl (unicode ;)
   colon  (unicode :)
   dot    (unicode .)
+  comma  (unicode ,)
   pipe   (unicode |)
   plus   (unicode +)
   minus  (unicode -)
   unders (unicode _)
   equals (unicode =)
+  q-mark (unicode ?)
   ;;
   euro   (unicode €)
 )
@@ -354,23 +364,23 @@ layout, I switched almost everything to UNICODE.
   (      ks         ) s
   (         kt      ) t
   ;; single keys at home-row-mods
-  (ka          k-spc) @met-a
-  (   kr       k-spc) @alt-r
-  (      ks    k-spc) @ctl-s
-  (         kt k-spc) @sft-t
-  (            k-spc) @esc-nav
+  (ka          k-bks) lmet
+  (   kr       k-bks) lalt
+  (      ks    k-bks) lctl
+  (         kt k-bks) sft
+  (            k-bks) @bks-med
   ;; combos of two
-  (ka kr       k-spc) (multi lmet lalt)
-  (ka    ks    k-spc) (multi lmet lctl)
-  (ka       kt k-spc) (multi lmet lsft)
-  (   kr ks    k-spc) (multi lalt lctl)
-  (   kr    kt k-spc) (multi lalt lsft)
-  (      ks kt k-spc) (multi lctl lsft)
+  (ka kr       k-bks) (multi lmet lalt)
+  (ka    ks    k-bks) (multi lmet lctl)
+  (ka       kt k-bks) (multi lmet lsft)
+  (   kr ks    k-bks) (multi lalt lctl)
+  (   kr    kt k-bks) (multi lalt lsft)
+  (      ks kt k-bks) (multi lctl lsft)
   ;; combos of three
-  (ka kr ks    k-spc) (multi lmet lalt lctl)
-  (ka kr    kt k-spc) (multi lmet lalt lsft)
-  (ka    ks kt k-spc) (multi lmet lctl lsft)
-  (   kr ks kt k-spc) (multi lalt lctl lsft)
+  (ka kr ks    k-bks) (multi lmet lalt lctl)
+  (ka kr    kt k-bks) (multi lmet lalt lsft)
+  (ka    ks kt k-bks) (multi lmet lctl lsft)
+  (   kr ks kt k-bks) (multi lalt lctl lsft)
   ;; right half
   ;; single keys
   (kj               ) j
@@ -381,34 +391,35 @@ layout, I switched almost everything to UNICODE.
   (kn               ) n
   (   ke            ) e
   (      ki         ) i
-  (         ko      ) (tap-dance $tt (o (unicode :)))
+  (         ko      ) o
   (            kg   ) g
   (kk               ) k
   (   kh            ) h
   (      k,         ) ,
   (         k.      ) @ralt-.
-  (            k/   ) @but-/
-  (            k-ret) @ret-num
-  (kn          k-ret) @sft-n
-  (   ke       k-ret) @ctl-e
-  (      ki    k-ret) @alt-i
-  (         ko k-ret) @met-o
+  (            k/   ) /
+  (            k-spc) @spc-fun
+  (kn          k-spc) lsft
+  (   ke       k-spc) lctl
+  (      ki    k-spc) lalt
+  (         ko k-spc) lmet
   ;; combos of two
-  (kn ke       k-ret) (multi lsft lctl)
-  (kn    ki    k-ret) (multi lsft lalt)
-  (kn       ko k-ret) (multi lsft lmet)
-  (   ke ki    k-ret) (multi lctl lalt)
-  (   ke    ko k-ret) (multi lctl lsft)
-  (      ki ko k-ret) (multi lalt lmet)
+  (kn ke       k-spc) (multi lsft lctl)
+  (kn    ki    k-spc) (multi lsft lalt)
+  (kn       ko k-spc) (multi lsft lmet)
+  (   ke ki    k-spc) (multi lctl lalt)
+  (   ke    ko k-spc) (multi lctl lmet)
+  (      ki ko k-spc) (multi lalt lmet)
   ;; combos of three
-  (kn ke ki    k-ret) (multi lsft lctl lalt)
-  (kn ke    ko k-ret) (multi lsft lctl lmet)
-  (kn    ki ko k-ret) (multi lsft lalt lmet)
-  (   ke ki ko k-ret) (multi lctl lalt lmet)
+  (kn ke ki    k-spc) (multi lsft lctl lalt)
+  (kn ke    ko k-spc) (multi lsft lctl lmet)
+  (kn    ki ko k-spc) (multi lsft lalt lmet)
+  (   ke ki ko k-spc) (multi lctl lalt lmet)
 )
 (defalias
   ;; caps-word(for 3 sec) or caps
-  capw    (tap-dance $tt ((caps-word 3000) caps))
+;;  capw    (tap-dance $tt ((caps-word 3000) caps))
+  capw    (tap-hold-press $tt $ht (caps-word 3000) caps)
   ;; left half
   ;; first row
   bas-q   (chord bas-chords kq)
@@ -430,7 +441,9 @@ layout, I switched almost everything to UNICODE.
   bas-d   (chord bas-chords kd)
   bas-v   (chord bas-chords kv)
   ;; thumbs
-  bas-spc (chord bas-chords k-spc)
+  bas-bks (chord bas-chords k-bks)
+  bas-esc @esc-nav
+  bas-tab @tab-mou
   ;; right half
   ;; first row
   bas-j   (chord bas-chords kj)
@@ -452,10 +465,13 @@ layout, I switched almost everything to UNICODE.
   bas-.   (chord bas-chords k.)
   bas-/   (chord bas-chords k/)
   ;; thumbs
-  bas-ret (chord bas-chords k-ret)
+  bas-del @del-sym
+  bas-ret @ret-num
+  bas-spc (chord bas-chords k-spc)
 )
 
-#| main layout: Colemac-DH with extra keys:
+#|
+ main layout: Colemac-DH with extra keys:
  home-row modifiers:
   MACS/WACS
  extra:
@@ -482,13 +498,14 @@ layout, I switched almost everything to UNICODE.
   @bas-q  @bas-w  @bas-f  @bas-p  @bas-b
   @bas-a  @bas-r  @bas-s  @bas-t  @bas-g
   @bas-z  @bas-x  @bas-c  @bas-d  @bas-v
-  @bks-med        @bas-spc        @tab-mou
+  @bas-bks        @bas-esc        @bas-tab
   ;; right
   @bas-j  @bas-l  @bas-u  @bas-y  @bas-'
   @bas-m  @bas-n  @bas-e  @bas-i  @bas-o
   @bas-k  @bas-h  @bas-,  @bas-.  @bas-/
-  @del-sym        @bas-ret        @spc-fun
-
+  @bas-del        @bas-ret        @bas-spc
+  ;; extra keys - not actually used, needed to intercept events
+  @lwh-ctl
 )
 
 ;; we use QWERTY layer with home-row modifiers and button+right alt
@@ -524,20 +541,20 @@ layout, I switched almost everything to UNICODE.
   ;;
   ;; home-row-mod chords (so that rolls don't cause problems)
   ;; left half
-  (qa               ) a
+  (qa               ) (tap-dance $tt (a [))
   (   qs            ) s
   (      qd         ) d
   (         qf      ) f
   (            q-spc) @esc-nav
-  (qa          q-spc) @met-a
-  (   qs       q-spc) @alt-s
-  (      qd    q-spc) @ctl-d
-  (         qf q-spc) @sft-f
+  (qa          q-spc) lmet
+  (   qs       q-spc) lalt
+  (      qd    q-spc) lctl
+  (         qf q-spc) lsft
   ;; right half
   (qj               ) j
   (   qk            ) k
   (      ql         ) l
-  (         q;      ) (tap-dance $tt (; (unicode :)))
+  (         q;      ) ;
   (            q-ret) @ret-num
   (qj          q-ret) @sft-j
   (   qk       q-ret) @ctl-k
@@ -600,6 +617,8 @@ layout, I switched almost everything to UNICODE.
   @qwe-h  @qwe-j  @qwe-k  @qwe-l  @qwe-;
   @qwe-n  @qwe-m  @qwe-,  @qwe-.  @qwe-/
   @del-sym        @qwe-ret        @spc-fun
+  ;; extra keys - not actually used, needed to intercept events
+  @lwh-ctl
 )
 
 (deflayer U_TAP
@@ -613,6 +632,8 @@ layout, I switched almost everything to UNICODE.
   m       n       e       i       o
   k       h       ,       .       /
   ent             bspc            del
+  ;; extra keys - not actually used, needed to intercept events
+  @lwh-ctl
 )
 
 (deflayer U_NUM
@@ -624,8 +645,10 @@ layout, I switched almost everything to UNICODE.
   ;; right
   XX      XX      XX      XX      XX
   ret     sft     ctl     alt     met
-  bspc    spc     tab     @dot    @slash
+  bspc    spc     tab     @dot    @backsl
   XX              XX              XX
+  ;; extra keys - not actually used, needed to intercept events
+  @lwh-ctl
 )
 
  ;; this is just shifter S_NUM
@@ -633,13 +656,15 @@ layout, I switched almost everything to UNICODE.
   ;; left
   @exclam @atcomm @hash   @dollar @percen
   @semicl @colon  @equals @minus  @plus
-  @tilde  @euro   XX      XX      @pipe
+  @tilde  @euro   @q-mark @comma  @pipe
   @lparen         @rparen         @unders
   ;; right
   @caret  @ampers @star   @lparen @rparen
   XX      lsft    lctl    lalt    lmet
   XX      spc     tab     bspc    @backsl
   XX              XX              XX
+  ;; extra keys - not actually used, needed to intercept events
+  @lwh-ctl
 )
 
 (deflayer U_FUN
@@ -653,6 +678,8 @@ layout, I switched almost everything to UNICODE.
   ret     sft     ctl     alt     met
   bspc    spc     tab     .       /
   XX              XX              XX
+  ;; extra keys - not actually used, needed to intercept events
+  @lwh-ctl
 
 )
 
@@ -681,6 +708,8 @@ layout, I switched almost everything to UNICODE.
   @rbrack left    down    right   pgdn
   @rparen @nav-h  @nav-,  @nav-.  @nav-/
   bspc            ent             del
+  ;; extra keys - not actually used, needed to intercept events
+  @lwh-ctl
 )
 
 (deflayer U_BUTTON
@@ -694,6 +723,8 @@ layout, I switched almost everything to UNICODE.
   XX      sft     ctl     alt     met
   @redo   @paste  @cut    @copy   @undo
   mrtp            mltp            mmtp
+  ;; extra keys - not actually used, needed to intercept events
+  @lwh-ctl
 )
 
 ;; some aliases for the mouse
@@ -723,8 +754,8 @@ layout, I switched almost everything to UNICODE.
 ;; ON  when the key is pressed
 ;; OFF when it's released
 (deffakekeys
-  micon  (cmd vmcli Strip[1].Gate=3 Strip[1].A1=1)
-  micoff (cmd vmcli Strip[1].Gate=7.4 Strip[1].A1=0)
+  micon  (cmd vmcli Strip[1].Gate=3   Strip[1].A1=1 Strip[1].B1=0)
+  micoff (cmd vmcli Strip[1].Gate=7.4 Strip[1].A1=0 Strip[1].B1=1)
 )
 (defalias
   miconoff (multi
@@ -746,17 +777,41 @@ layout, I switched almost everything to UNICODE.
   XX      XX      XX      XX      XX
   ;; thumbs - r/l/m mouse tapt (as opposed to clicks)
   mrtp            mltp            mmtp
+  ;; extra keys - not actually used, needed to intercept events
+  @lwh-ctl
 )
 
+(defalias
+  mute (cmd vmcli !Strip[3].Mute)
+)
 (deflayer U_MEDIA
   ;; left
   XX      @n-tap  @n-qwe  @n-bas  XX
   XX      XX      XX      XX      XX
   XX      XX      XX      XX      XX
-  XX              XX              XX
+  bks             XX              XX
   ;; right
   XX      XX      XX      XX      XX
   prev    vold    volu    next    @miconoff
   XX      XX      XX      XX      XX
-  stopcd          pp              mute
+  stopcd          pp              @mute
+  ;; extra keys - not actually used, needed to intercept events
+  @lwh-ctl
+)
+
+(deflayer U_CTL
+  ;; right half
+  XX      XX      XX      XX      XX
+  XX      XX      XX      XX      XX
+  XX      XX      C-ins   S-ins   XX
+  ;; thumbs
+  XX              XX              XX
+  ;; left half
+  XX      XX      XX      XX      XX
+  XX      XX      XX      XX      XX
+  XX      XX      XX      XX      XX
+  ;; thumbs
+  XX              XX              XX
+  ;; extra keys - not actually used, needed to intercept events
+  lctrl
 )
