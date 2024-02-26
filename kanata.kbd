@@ -195,6 +195,7 @@ so it can be serialized via (macro fake real whatever)
 (defalias
   ;; layer switching
   ;; temporary layer switching
+  lwh-bas   (layer-while-held U_BASE)
   lwh-but   (layer-while-held U_BUTTON)
   lwh-fun   (layer-while-held U_FUN)
   lwh-nav   (layer-while-held U_NAV)
@@ -250,27 +251,9 @@ so it can be serialized via (macro fake real whatever)
 
 #|
 UNICODE section
-
-Since I'm using two layouts:
-- US_Eng/Cloemak-DH-matrix
-- Russian
-
-There's an inconsistency befweet shifted symbols.
-So to always get the same symbols regardless of the
-layout, I switched almost everything to UNICODE.
-
 |#
 (defalias
   ;; 1-5
-  exclam (unicode !)
-  atcomm (unicode @)
-  hash   (unicode #)
-  dollar (unicode $)
-  percen (unicode %)
-  ;; 6-0
-  caret  (unicode ^)
-  ampers (unicode &)
-  star   (unicode *)
   lparen (macro S-9)
   rparen (macro S-0)
   ;; {[()]}
@@ -282,7 +265,8 @@ layout, I switched almost everything to UNICODE.
   grave  (unicode `)
   tilde  (unicode ~)
   slash  (unicode /)
-  backsl (multi (unicode \) (macro 10 f24))
+;;  backsl (multi (unicode \) (macro 10 f24))
+  backsl \
   semicl (unicode ;)
   colon  (unicode :)
   dot    (unicode .)
@@ -523,6 +507,20 @@ layout, I switched almost everything to UNICODE.
   ;; for {[()]} -- TBD
 )
 
+(defalias
+  qwe-sft (multi (layer-while-held U_BASE) lsft)
+  qwe-ctl (multi (layer-while-held U_BASE) lctl)
+  qwe-alt (multi (layer-while-held U_BASE) lalt)
+  qwe-met (multi (layer-while-held U_BASE) lmet)
+  ;; a special mode - need to switch to base
+  qwe-sym (multi
+            (on-press-fakekey fake-win-eng tap)
+            @lwh-sym
+            (on-release-fakekey fake-win-rus tap)
+          )
+  del-sym2  (tap-hold-press $tt $ht del @qwe-sym)
+)
+
 ;; U_QWERTY: Chords for home row and more:
 (defchords qwe-chords 500
   ;; f + j = caps-word (two shifts)
@@ -545,21 +543,21 @@ layout, I switched almost everything to UNICODE.
   (   qs            ) s
   (      qd         ) d
   (         qf      ) f
-  (            q-spc) @esc-nav
-  (qa          q-spc) lmet
-  (   qs       q-spc) lalt
-  (      qd    q-spc) lctl
-  (         qf q-spc) lsft
+  (            q-bks) @bks-med
+  (qa          q-bks) @qwe-met
+  (   qs       q-bks) @qwe-alt
+  (      qd    q-bks) @qwe-ctl
+  (         qf q-bks) @qwe-sft
   ;; right half
   (qj               ) j
   (   qk            ) k
   (      ql         ) l
   (         q;      ) ;
-  (            q-ret) @ret-num
-  (qj          q-ret) @sft-j
-  (   qk       q-ret) @ctl-k
-  (      ql    q-ret) @alt-l
-  (         q; q-ret) @met-;
+  (            q-spc) @spc-fun
+  (qj          q-spc) @qwe-sft
+  (   qk       q-spc) @qwe-ctl
+  (      ql    q-spc) @qwe-alt
+  (         q; q-spc) @qwe-met
 )
 (defalias
   ;; left half
@@ -582,7 +580,9 @@ layout, I switched almost everything to UNICODE.
   qwe-v   (chord qwe-chords qv)
   qwe-b   (chord qwe-chords qb)
   ;; thumbs
-  qwe-spc (chord qwe-chords q-spc)
+  qwe-bks (chord qwe-chords q-bks)
+  qwe-esc @esc-nav
+  qwe-tab @tab-mou
   ;; right half
   ;; first row
   qwe-y   y
@@ -603,7 +603,9 @@ layout, I switched almost everything to UNICODE.
   qwe-.   .
   qwe-/   @but-z
   ;; thumbs
-  qwe-ret (chord qwe-chords q-ret)
+  qwe-del @del-sym2
+  qwe-ret @ret-num
+  qwe-spc (chord qwe-chords q-spc)
 )
 
 (deflayer U_QWERTY
@@ -611,12 +613,12 @@ layout, I switched almost everything to UNICODE.
   @qwe-q  @qwe-w  @qwe-e  @qwe-r  @qwe-t
   @qwe-a  @qwe-s  @qwe-d  @qwe-f  @qwe-g
   @qwe-z  @qwe-x  @qwe-c  @qwe-v  @qwe-b
-  @bks-med        @qwe-spc        @tab-mou
+  @qwe-bks        @qwe-esc        @qwe-tab
   ;; right
   @qwe-y  @qwe-u  @qwe-i  @qwe-o  @qwe-p
   @qwe-h  @qwe-j  @qwe-k  @qwe-l  @qwe-;
   @qwe-n  @qwe-m  @qwe-,  @qwe-.  @qwe-/
-  @del-sym        @qwe-ret        @spc-fun
+  @qwe-del        @qwe-ret        @qwe-spc
   ;; extra keys - not actually used, needed to intercept events
   @lwh-ctl
 )
@@ -645,7 +647,7 @@ layout, I switched almost everything to UNICODE.
   ;; right
   XX      XX      XX      XX      XX
   ret     sft     ctl     alt     met
-  bspc    spc     tab     @dot    @backsl
+  bspc    bspc    tab     XX      @backsl
   XX              XX              XX
   ;; extra keys - not actually used, needed to intercept events
   @lwh-ctl
@@ -654,14 +656,14 @@ layout, I switched almost everything to UNICODE.
  ;; this is just shifter S_NUM
 (deflayer U_SYM
   ;; left
-  @exclam @atcomm @hash   @dollar @percen
-  @semicl @colon  @equals @minus  @plus
-  @tilde  @euro   @q-mark @comma  @pipe
+  S-1     S-2     S-3     S-4     S-5
+  scln    S-scln  =       -       +
+  S-`     @euro   S-/     ,       S-\
   @lparen         @rparen         @unders
   ;; right
-  @caret  @ampers @star   @lparen @rparen
+  S-6     S-7     S-8     S-9     S-0
   XX      lsft    lctl    lalt    lmet
-  XX      spc     tab     bspc    @backsl
+  XX      bspc    tab     XX      @backsl
   XX              XX              XX
   ;; extra keys - not actually used, needed to intercept events
   @lwh-ctl
@@ -706,7 +708,7 @@ layout, I switched almost everything to UNICODE.
   ;; right
   @rbrace home    up      end     pgup
   @rbrack left    down    right   pgdn
-  @rparen @nav-h  @nav-,  @nav-.  @nav-/
+  @rparen XX      XX      @nav-.  @nav-/
   bspc            ent             del
   ;; extra keys - not actually used, needed to intercept events
   @lwh-ctl
@@ -749,21 +751,6 @@ layout, I switched almost everything to UNICODE.
   fst (movemouse-speed 200)
 )
 
-;; this tells VoiceMeeter to 
-;; turn mice passthrough to headphones
-;; ON  when the key is pressed
-;; OFF when it's released
-(deffakekeys
-  micon  (cmd vmcli Strip[1].Gate=3   Strip[1].A1=1 Strip[1].B1=0)
-  micoff (cmd vmcli Strip[1].Gate=7.4 Strip[1].A1=0 Strip[1].B1=1)
-)
-(defalias
-  miconoff (multi
-    (on-press-fakekey   micon  tap)
-    (on-release-fakekey micoff tap)
-  )
-)
-
 (deflayer U_MOUSE
   ;; left half
   XX      @n-tap  @n-qwe  @n-bas  XX
@@ -781,12 +768,27 @@ layout, I switched almost everything to UNICODE.
   @lwh-ctl
 )
 
+;; this tells VoiceMeeter to 
+;; turn mice passthrough to headphones
+;; ON  when the key is pressed
+;; OFF when it's released
+(deffakekeys
+  micon  (cmd vmcli Strip[1].Gate=3   Strip[1].A1=1 Strip[1].B1=0)
+  micoff (cmd vmcli Strip[1].Gate=7.4 Strip[1].A1=0 Strip[1].B1=1)
+)
 (defalias
+  miconoff (multi
+    (on-press-fakekey   micon  tap)
+    (on-release-fakekey micoff tap)
+  )
+  ;; reset sound system
+  sndrst (cmd C:/PROGRA~2/VB/VOICEM~1/VOICEM~2.EXE -R)
+  ;;
   mute (cmd vmcli !Strip[3].Mute)
 )
 (deflayer U_MEDIA
   ;; left
-  XX      @n-tap  @n-qwe  @n-bas  XX
+  @sndrst @n-tap  @n-qwe  @n-bas  XX
   XX      XX      XX      XX      XX
   XX      XX      XX      XX      XX
   bks             XX              XX
