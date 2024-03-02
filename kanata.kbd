@@ -159,6 +159,7 @@ so it can be serialized via (macro fake real whatever)
   fake-lsw-qwe (layer-switch U_QWERTY)
   fake-lsw-tap (layer-switch U_TAP)
   fake-lsw-sym (layer-switch U_SYM)
+  fake-lsw-sym-r (layer-switch U_SYM_RUS)
   ;;
   ;; symbols to be handied by OS
   fake-hyper-a (multi rmet rctl lalt a)
@@ -195,6 +196,7 @@ so it can be serialized via (macro fake real whatever)
   lsw-qwe (on-press-fakekey fake-lsw-qwe tap)
   lsw-tap (on-press-fakekey fake-lsw-tap tap)
   lsw-sym (on-press-fakekey fake-lsw-sym tap)
+  lsw-sym-r (on-press-fakekey fake-lsw-sym-r tap)
   ;; shorter names for input swithing in Windows
   win-eng (on-press-fakekey fake-win-eng tap)
   win-rus (on-press-fakekey fake-win-rus tap)
@@ -214,6 +216,7 @@ so it can be serialized via (macro fake real whatever)
   lwh-med   (layer-while-held U_MEDIA)
   lwh-mou   (layer-while-held U_MOUSE)
   lwh-sym   (layer-while-held U_SYM)
+  lwh-sym-r (layer-while-held U_SYM_RUS)
   lwh-ctl   (layer-while-held U_CTL)
   ;;
   ;; tap-hold actions for thumb keys
@@ -223,7 +226,9 @@ so it can be serialized via (macro fake real whatever)
   tab-mou   (tap-hold-press $tt $ht tab @lwh-mou)
   ;; right (left-2-right order)
   del-sym   (tap-hold-press $tt $ht del @lwh-sym)
-  ret-fun   (tap-hold-press $tt $ht ret @lwh-fun)
+  del-sym-r (tap-hold-press $tt $ht del @lwh-sym-r)
+;;  ret-fun   (tap-hold-press $tt $ht ret @lwh-fun)
+  ret-fun   (tap-hold-press $tt $ht XX @lwh-fun)
   spc-num   (tap-hold-press $st $ht spc @lwh-num)
   ;;
 )
@@ -256,6 +261,13 @@ UNICODE section
   unders (unicode _)
   equals (unicode =)
   q-mark (unicode ?)
+  ;;
+  at     (unicode @)
+  hash   (unicode #)
+  dollar (unicode $)
+  percen (unicode %)
+  caret  (unicode ^)
+  ampers (unicode &)
   ;;
   euro   (unicode €)
 )
@@ -310,7 +322,6 @@ UNICODE section
   ;;
   (kd kh) @rus
   ;;
-  (kg km) (cmd files)
   ;;
   ;; left half
   (kq            ) q
@@ -336,6 +347,7 @@ UNICODE section
   (      kc kd   ) @copy
   (         kd kv) @paste
   ;;
+  (kw kf) (macro esc @colon w ret)
   ;; right half
   (kj            ) j
   (   kl         ) l
@@ -353,7 +365,13 @@ UNICODE section
   (   kh         ) h
   (      k,      ) ,
   (         k.   ) .
-  (            k/) /
+  (            k/) (tap-hold $tt $ht / @q-mark)
+  ;;
+  (kl ku) S-'
+  (ku ky) ret
+  (kh k,) ,
+  (k, k.) .
+  (k. k/) @q-mark
 )
 (defalias
   ;; left half
@@ -410,9 +428,8 @@ UNICODE section
   bas-/   (chord bas-chords k/)
   ;; thumbs
   bas-del @del-sym
-  bas-ret @ret-fun
-  ;;bas-spc (chord bas-chords k-spc)
   bas-spc @spc-num
+  bas-ret @ret-fun
 )
 
 #|
@@ -448,7 +465,7 @@ UNICODE section
   @bas-j  @bas-l  @bas-u  @bas-y  @bas-'
   @bas-m  @bas-n  @bas-e  @bas-i  @bas-o
   @bas-k  @bas-h  @bas-,  @bas-.  @bas-/
-  @bas-del        @bas-ret        @bas-spc
+  @bas-del        @bas-spc        @bas-ret
   ;; extra keys - not actually used, needed to intercept events
   @lwh-ctl
 )
@@ -470,22 +487,12 @@ UNICODE section
   ;; for {[()]} -- TBD
 )
 
-(defalias
-  ;; a special mode - need to switch to base
-  qwe-sym (multi
-    (on-press-fakekey fake-win-eng tap)
-    @lwh-sym
-    (on-release-fakekey fake-win-rus tap)
-  )
-)
-
 ;; U_QWERTY:
 (defchords qwe-chords 500
   ;; f + j = caps-word (two shifts)
   (qf qj) @capw
   ;;
   (qz q/) (one-shot 1000 (layer-while-held U_BUTTON))
-  ;;
   ;;
   ;; left half
   (qq            ) q
@@ -528,6 +535,11 @@ UNICODE section
   (      q,      ) ,
   (         q.   ) .
   (            q/) @slash
+  ;;
+  (qu qi) S-2
+  (qm q,) @comma
+  (q, q.) @dot
+  (q. q/) @q-mark
 )
 (defalias
   ;; left half
@@ -573,9 +585,9 @@ UNICODE section
   qwe-.   (chord qwe-chords q.)
   qwe-/   (chord qwe-chords q/)
   ;; thumbs
-  qwe-del (tap-hold-press $tt $ht del @qwe-sym)
-  qwe-ret @ret-fun
+  qwe-del @del-sym-r
   qwe-spc @spc-num
+  qwe-ret @ret-fun
 )
 
 (deflayer U_QWERTY
@@ -588,7 +600,7 @@ UNICODE section
   @qwe-y  @qwe-u  @qwe-i  @qwe-o  @qwe-p
   @qwe-h  @qwe-j  @qwe-k  @qwe-l  @qwe-;
   @qwe-n  @qwe-m  @qwe-,  @qwe-.  @qwe-/
-  @qwe-del        @qwe-ret        @qwe-spc
+  @qwe-del        @qwe-spc        @qwe-ret
   ;; extra keys - not actually used, needed to intercept events
   @lwh-ctl
 )
@@ -623,17 +635,33 @@ UNICODE section
   @lwh-ctl
 )
 
- ;; this is just shifter S_NUM
+ ;; this is no longer just shifted S_NUM
 (deflayer U_SYM
   ;; left
   S-1     S-2     S-3     S-4     S-5
   scln    S-scln  =       -       S-= ;; @plus
-  @tilde  @euro   S-/     XX      @backsl
+  @tilde  @euro   XX      XX      @pipe
   @lparen         @rparen         @unders
   ;; right
   S-6     S-7     S-8     S-9     S-0
-  @dot    lsft    lctl    lalt    lmet
-  @comma  bspc    tab     caps    @backsl
+  XX      lsft    lctl    lalt    lmet
+  XX      bspc    tab     caps    \
+  XX              XX              XX
+  ;; extra keys - not actually used, needed to intercept events
+  @lwh-ctl
+)
+
+;; this is no longer just shifted S_NUM
+(deflayer U_SYM_RUS
+  ;; left
+  S-1     @at     @hash   @dollar @percen
+  @semicl @colon  =       -       S-= ;; @plus
+  @tilde  @euro   XX      XX      @backsl
+  @lparen         @rparen         @unders
+  ;; right
+  @caret  @ampers S-8     S-9     S-0
+  XX      lsft    lctl    lalt    lmet
+  XX      bspc    tab     caps    @backsl
   XX              XX              XX
   ;; extra keys - not actually used, needed to intercept events
   @lwh-ctl
