@@ -139,8 +139,8 @@ so it can be serialized via (macro fake real whatever)
 |#
 (deffakekeys
   ;; win-input switching - add more here
-  fake-win-eng (multi lalt lsft 0)
-  fake-win-rus (multi lalt lsft 1)
+  fake-win-eng (multi (release-key rctl) (release-key rmet) lalt lsft 0)
+  fake-win-rus (multi (release-key rctl) (release-key rmet) lalt lsft 1)
   ;;
   ;; permanent layer-switching
   fake-lsw-bas (layer-switch U_BASE)
@@ -211,7 +211,7 @@ so it can be serialized via (macro fake real whatever)
   lwh-ctl   (layer-while-held U_CTL)
   ;;
   ;; swetch to English and then send tab
-  eng-tab   (macro @eng tab)
+  eng-tab   (macro @eng 100 tab)
   ;; do eng-tab if any of right-side HRMs are active, tab otherwise
   smart-tab (fork tab @eng-tab (rsft lalt rctl rmet))
   ;;
@@ -269,7 +269,7 @@ UNICODE section
   at     (unicode @)
   hash   (unicode #)
   dollar (unicode $)
-  euro   (unicode Γé¼)
+  euro   (unicode €)
   percen (unicode %)
   caret  (unicode ^)
   ampers (unicode &)
@@ -397,9 +397,9 @@ UNICODE section
   ;; prevent rolls from affecting neighbouring keys (as defined in defsrc)
   ;; so a/s/d/f input results in this:
   bas-a   (tap-hold-press $tt $ht (chord bas-chords ka) lmet)
-  bas-r   (tap-hold-press $tt $ht (chord bas-chords kr) lalt)
-  bas-s   (tap-hold-press $tt $ht (chord bas-chords ks) lctl)
-  bas-t   (tap-hold-press $tt $ht (chord bas-chords kt) lsft)
+  bas-r   (fork (tap-hold-press $tt $ht (chord bas-chords kr) lalt) XX (lctl lmet))
+  bas-s   (fork (tap-hold-press $tt $ht (chord bas-chords ks) lctl) XX (lalt))
+  bas-t   (fork (tap-hold-press $tt $ht (chord bas-chords kt) lsft) XX (lctl))
   bas-g   (chord bas-chords kg)
   ;; third row
   ;; keys z/x/c/d/v for undo/cut/copy/paste
@@ -426,9 +426,9 @@ UNICODE section
   bas-'   (chord bas-chords k')
   ;; second row
   bas-m   (chord bas-chords km)
-  bas-n   (tap-hold-press $tt $ht (chord bas-chords kn) rsft)
-  bas-e   (tap-hold-press $tt $ht (chord bas-chords ke) rctl)
-  bas-i   (tap-hold-press $tt $ht (chord bas-chords ki) lalt)
+  bas-n   (fork (tap-hold-press $tt $ht (chord bas-chords kn) rsft) XX (rctl))
+  bas-e   (fork (tap-hold-press $tt $ht (chord bas-chords ke) rctl) XX (lalt))
+  bas-i   (fork (tap-hold-press $tt $ht (chord bas-chords ki) lalt) XX (rctl rmet))
   bas-o   (tap-hold-press $tt $ht (chord bas-chords ko) rmet)
   ;; third row
   bas-k   (chord bas-chords kk)
@@ -484,15 +484,15 @@ UNICODE section
 ;; to allow proper Cyrillic mapping
 ;;
 ;; here are some hacks:
-;; ╤è is double-tapped ╤î
-;; ╤æ is double-tapped ╨╡
-;; ╤ì is triple-tapped ╨╡
+;; ъ is double-tapped ь
+;; ё is double-tapped е
+;; э is triple-tapped е
 (defalias
-  ;; cyrillic ╨╡/╤ì/╤æ
+  ;; cyrillic е/э/ё
   cyr-eee  (tap-dance $tt (i apo grv))
-  ;; cyrillic ╤î/╤è
+  ;; cyrillic ь/ъ
   cyr-soft (tap-dance $tt (m ]))
-  ;; cyrillic   ╤ä/╤à
+  ;; cyrillic   ф/х
   cyr-fh   (tap-dance $tt (o [))
   ;; for {[()]} -- TBD
 )
@@ -504,6 +504,7 @@ UNICODE section
   ;;
   (qz q/) (one-shot 1000 (layer-while-held U_BUTTON))
   ;;
+  (qv qm) @eng
   ;; left half
   (qq            ) q
   (   qw         ) w
@@ -527,10 +528,6 @@ UNICODE section
   (   qx qc      ) @cut
   (      qc qv   ) @copy
   (         qv qb) @paste
-  ;; f+p = vim command
-  (qe qr) (macro esc @colon @eng)
-  ;; w+f = vim save
-  (qw qe) (macro esc @colon (unicode w) ret)
   ;; right half
   (qy            ) y
   (   qu         ) u
@@ -558,47 +555,49 @@ UNICODE section
 )
 (defalias
   ;; left half
+  ;; only output if none of the opposing-hand HRMs are depressed
   ;; first row
-  qwe-q   (chord qwe-chords qq)
-  qwe-w   (chord qwe-chords qw)
-  qwe-e   (chord qwe-chords qe)
-  qwe-r   (chord qwe-chords qr)
-  qwe-t   (chord qwe-chords qt)
+;;  qwe-q   (chord qwe-chords qq)
+  qwe-q   (fork (chord qwe-chords qq) XX (lalt rctl rmet))
+  qwe-w   (fork (chord qwe-chords qw) XX (lalt rctl rmet))
+  qwe-e   (fork (chord qwe-chords qe) XX (lalt rctl rmet))
+  qwe-r   (fork (chord qwe-chords qr) XX (lalt rctl rmet))
+  qwe-t   (fork (chord qwe-chords qt) XX (lalt rctl rmet))
   ;; second row
-  qwe-a   (tap-hold-press $tt $ht (chord qwe-chords qa) lmet)
-  qwe-s   (tap-hold-press $tt $ht (chord qwe-chords qs) lalt)
-  qwe-d   (tap-hold-press $tt $ht (chord qwe-chords qd) lctl)
-  qwe-f   (tap-hold-press $tt $ht (chord qwe-chords qf) lsft)
-  qwe-g   (chord qwe-chords qg)
+  qwe-a   (fork (tap-hold-press $tt $ht (chord qwe-chords qa) lmet) XX (lalt lctl lmet))
+  qwe-s   (fork (tap-hold-press $tt $ht (chord qwe-chords qs) lalt) XX (lalt lctl lmet))
+  qwe-d   (fork (tap-hold-press $tt $ht (chord qwe-chords qd) lctl) XX (lalt lctl lmet))
+  qwe-f   (fork (tap-hold-press $tt $ht (chord qwe-chords qf) lsft) XX (lalt lctl lmet))
+  qwe-g   (fork (chord qwe-chords qg) XX (lalt rctl rmet))
   ;; third row
-  qwe-z   (chord qwe-chords qz)
-  qwe-x   (chord qwe-chords qx)
-  qwe-c   (chord qwe-chords qc)
-  qwe-v   (chord qwe-chords qv)
-  qwe-b   (chord qwe-chords qb)
+  qwe-z   (fork (chord qwe-chords qz) XX (lalt rctl rmet))
+  qwe-x   (fork (chord qwe-chords qx) XX (lalt rctl rmet))
+  qwe-c   (fork (chord qwe-chords qc) XX (lalt rctl rmet))
+  qwe-v   (fork (chord qwe-chords qv) XX (lalt rctl rmet))
+  qwe-b   (fork (chord qwe-chords qb) XX (lalt rctl rmet))
   ;; thumbs
   qwe-bks @esc-med
   qwe-del @spc-nav
   qwe-end @tab-mou
   ;; right half(chord qwe-chords qz)
   ;; first row
-  qwe-y   (chord qwe-chords qy)
-  qwe-u   (chord qwe-chords qu)
-  qwe-i   (chord qwe-chords qi)
-  qwe-o   (chord qwe-chords qo)
-  qwe-p   (chord qwe-chords qp)
+  qwe-y   (fork (chord qwe-chords qy) XX (lalt lctl lmet))
+  qwe-u   (fork (chord qwe-chords qu) XX (lalt lctl lmet))
+  qwe-i   (fork (chord qwe-chords qi) XX (lalt lctl lmet))
+  qwe-o   (fork (chord qwe-chords qo) XX (lalt lctl lmet))
+  qwe-p   (fork (chord qwe-chords qp) XX (lalt lctl lmet))
   ;; second row
-  qwe-h   (chord qwe-chords qh)
-  qwe-j   (tap-hold-press $tt $ht (chord qwe-chords qj) rsft)
-  qwe-k   (tap-hold-press $tt $ht (chord qwe-chords qk) rctl)
-  qwe-l   (tap-hold-press $tt $ht (chord qwe-chords ql) lalt)
-  qwe-;   (tap-hold-press $tt $ht (chord qwe-chords q;) rmet)
+  qwe-h   (fork (chord qwe-chords qh) XX (lalt lctl lmet))
+  qwe-j   (fork (tap-hold-press $tt $ht (chord qwe-chords qj) rsft) XX (lalt lctl lmet))
+  qwe-k   (fork (tap-hold-press $tt $ht (chord qwe-chords qk) rctl) XX (lalt lctl lmet))
+  qwe-l   (fork (tap-hold-press $tt $ht (chord qwe-chords ql) lalt) XX (lalt lctl lmet))
+  qwe-;   (fork (tap-hold-press $tt $ht (chord qwe-chords q;) rmet) XX (lalt lctl lmet))
   ;; third row
-  qwe-n   (chord qwe-chords qn)
-  qwe-m   (chord qwe-chords qm)
-  qwe-,   (chord qwe-chords q,)
-  qwe-.   (chord qwe-chords q.)
-  qwe-/   (chord qwe-chords q/)
+  qwe-n   (fork (chord qwe-chords qn) XX (lalt lctl lmet))
+  qwe-m   (fork (chord qwe-chords qm) XX (lalt lctl lmet))
+  qwe-,   (fork (chord qwe-chords q,) XX (lalt lctl lmet))
+  qwe-.   (fork (chord qwe-chords q.) XX (lalt lctl lmet))
+  qwe-/   (fork (chord qwe-chords q/) XX (lalt lctl lmet))
   ;; thumbs
   qwe-pgd @ret-sym-r
   qwe-ret @bks-num
@@ -743,15 +742,15 @@ UNICODE section
   mwl (mwheel-left 50 120)
   mwr (mwheel-right 50 120)
 
-  msΓåæ (movemouse-up 1 1)
-  msΓåÉ (movemouse-left 1 1)
-  msΓåô (movemouse-down 1 1)
-  msΓåÆ (movemouse-right 1 1)
+  ms↑ (movemouse-up 1 1)
+  ms← (movemouse-left 1 1)
+  ms↓ (movemouse-down 1 1)
+  ms→ (movemouse-right 1 1)
 
-  maΓåæ (movemouse-accel-up 1 1000 1 5)
-  maΓåÉ (movemouse-accel-left 1 1000 1 5)
-  maΓåô (movemouse-accel-down 1 1000 1 5)
-  maΓåÆ (movemouse-accel-right 1 1000 1 5)
+  ma↑ (movemouse-accel-up 1 1000 1 5)
+  ma← (movemouse-accel-left 1 1000 1 5)
+  ma↓ (movemouse-accel-down 1 1000 1 5)
+  ma→ (movemouse-accel-right 1 1000 1 5)
 
   sm (setmouse 32228 32228)
 
@@ -766,8 +765,8 @@ UNICODE section
   ;; thumbs
   XX              XX              XX
   ;; right half
-  @eng    XX      @msΓåæ    XX      @mwu
-  @rus    @msΓåÉ    @msΓåô    @msΓåÆ    @mwd
+  @eng    XX      @ms↑    XX      @mwu
+  @rus    @ms←    @ms↓    @ms→    @mwd
   XX      XX      XX      XX      XX
   ;; thumbs - r/l/m mouse tapt (as opposed to clicks)
   mrtp            mltp            mmtp
