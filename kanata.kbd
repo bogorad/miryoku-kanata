@@ -388,26 +388,26 @@ UNICODE section
 (defalias
   ;; left half
   ;; first row
-  bas-q   (chord bas-chords kq)
-  bas-w   (chord bas-chords kw)
-  bas-f   (chord bas-chords kf)
-  bas-p   (chord bas-chords kp)
-  bas-b   (chord bas-chords kb)
+  bas-q   (fork (chord bas-chords kq) XX (lalt lctl lmet))
+  bas-w   (fork (chord bas-chords kw) XX (lalt lctl lmet))
+  bas-f   (fork (chord bas-chords kf) XX (lalt lctl lmet))
+  bas-p   (fork (chord bas-chords kp) XX (lalt lctl lmet))
+  bas-b   (fork (chord bas-chords kb) XX (lalt lctl lmet))
   ;;second row
   ;; prevent rolls from affecting neighbouring keys (as defined in defsrc)
   ;; so a/s/d/f input results in this:
   bas-a   (tap-hold-press $tt $ht (chord bas-chords ka) lmet)
-  bas-r   (fork (tap-hold-press $tt $ht (chord bas-chords kr) lalt) XX (lctl lmet))
+  bas-r   (fork (tap-hold-press $tt $ht (chord bas-chords kr) lalt) f18 (lctl lmet))
   bas-s   (fork (tap-hold-press $tt $ht (chord bas-chords ks) lctl) XX (lalt))
   bas-t   (fork (tap-hold-press $tt $ht (chord bas-chords kt) lsft) XX (lctl))
-  bas-g   (chord bas-chords kg)
+  bas-g   (fork (chord bas-chords kg) XX (lalt lctl lmet))
   ;; third row
   ;; keys z/x/c/d/v for undo/cut/copy/paste
-  bas-z   (chord bas-chords kz)
-  bas-x   (chord bas-chords kx)
-  bas-c   (chord bas-chords kc)
-  bas-d   (chord bas-chords kd)
-  bas-v   (chord bas-chords kv)
+  bas-z   (fork (chord bas-chords kz) XX (lalt lctl lmet))
+  bas-x   (fork (chord bas-chords kx) XX (lalt lctl lmet))
+  bas-c   (fork (chord bas-chords kc) XX (lalt lctl lmet))
+  bas-d   (fork (chord bas-chords kd) XX (lalt lctl lmet))
+  bas-v   (fork (chord bas-chords kv) XX (lalt lctl lmet))
   ;; thumbs
   ;; bas-bks (chord bas-chords k-bks)
 ;;  bas-bks @bks-med
@@ -428,7 +428,7 @@ UNICODE section
   bas-m   (chord bas-chords km)
   bas-n   (fork (tap-hold-press $tt $ht (chord bas-chords kn) rsft) XX (rctl))
   bas-e   (fork (tap-hold-press $tt $ht (chord bas-chords ke) rctl) XX (lalt))
-  bas-i   (fork (tap-hold-press $tt $ht (chord bas-chords ki) lalt) XX (rctl rmet))
+  bas-i   (fork (tap-hold-press $tt $ht (chord bas-chords ki) lalt) f18 (rctl rmet))
   bas-o   (tap-hold-press $tt $ht (chord bas-chords ko) rmet)
   ;; third row
   bas-k   (chord bas-chords kk)
@@ -558,46 +558,46 @@ UNICODE section
   ;; only output if none of the opposing-hand HRMs are depressed
   ;; first row
 ;;  qwe-q   (chord qwe-chords qq)
-  qwe-q   (fork (chord qwe-chords qq) XX (lalt rctl rmet))
-  qwe-w   (fork (chord qwe-chords qw) XX (lalt rctl rmet))
-  qwe-e   (fork (chord qwe-chords qe) XX (lalt rctl rmet))
-  qwe-r   (fork (chord qwe-chords qr) XX (lalt rctl rmet))
-  qwe-t   (fork (chord qwe-chords qt) XX (lalt rctl rmet))
+  qwe-q   (fork (chord qwe-chords qq) XX (lalt lctl lmet))
+  qwe-w   (fork (chord qwe-chords qw) XX (lalt lctl lmet))
+  qwe-e   (fork (chord qwe-chords qe) XX (lalt lctl lmet))
+  qwe-r   (fork (chord qwe-chords qr) XX (lalt lctl lmet))
+  qwe-t   (fork (chord qwe-chords qt) XX (lalt lctl lmet))
   ;; second row
-  qwe-a   (fork (tap-hold-press $tt $ht (chord qwe-chords qa) lmet) XX (lalt lctl lmet))
-  qwe-s   (fork (tap-hold-press $tt $ht (chord qwe-chords qs) lalt) XX (lalt lctl lmet))
-  qwe-d   (fork (tap-hold-press $tt $ht (chord qwe-chords qd) lctl) XX (lalt lctl lmet))
-  qwe-f   (fork (tap-hold-press $tt $ht (chord qwe-chords qf) lsft) XX (lalt lctl lmet))
-  qwe-g   (fork (chord qwe-chords qg) XX (lalt rctl rmet))
+  qwe-a   (fork (tap-hold-press $tt $ht (chord qwe-chords qa) lmet) f18 (lalt lctl lmet))
+  qwe-s   (fork (tap-hold-press $tt $ht (chord qwe-chords qs) lalt) f18 (lalt lctl lmet))
+  qwe-d   (fork (tap-hold-press $tt $ht (chord qwe-chords qd) lctl) XX  (lalt lctl lmet))
+  qwe-f   (fork (tap-hold-press $tt $ht (chord qwe-chords qf) lsft) XX  (lalt lctl lmet))
+  qwe-g   (fork (chord qwe-chords qg) XX (lalt rctl lmet))
   ;; third row
-  qwe-z   (fork (chord qwe-chords qz) XX (lalt rctl rmet))
-  qwe-x   (fork (chord qwe-chords qx) XX (lalt rctl rmet))
-  qwe-c   (fork (chord qwe-chords qc) XX (lalt rctl rmet))
-  qwe-v   (fork (chord qwe-chords qv) XX (lalt rctl rmet))
-  qwe-b   (fork (chord qwe-chords qb) XX (lalt rctl rmet))
+  qwe-z   (fork (chord qwe-chords qz) XX (lalt lctl lmet))
+  qwe-x   (fork (chord qwe-chords qx) XX (lalt lctl lmet))
+  qwe-c   (fork (chord qwe-chords qc) XX (lalt lctl lmet))
+  qwe-v   (fork (chord qwe-chords qv) XX (lalt lctl lmet))
+  qwe-b   (fork (chord qwe-chords qb) XX (lalt lctl lmet))
   ;; thumbs
   qwe-bks @esc-med
   qwe-del @spc-nav
   qwe-end @tab-mou
   ;; right half(chord qwe-chords qz)
   ;; first row
-  qwe-y   (fork (chord qwe-chords qy) XX (lalt lctl lmet))
-  qwe-u   (fork (chord qwe-chords qu) XX (lalt lctl lmet))
-  qwe-i   (fork (chord qwe-chords qi) XX (lalt lctl lmet))
-  qwe-o   (fork (chord qwe-chords qo) XX (lalt lctl lmet))
-  qwe-p   (fork (chord qwe-chords qp) XX (lalt lctl lmet))
+  qwe-y   (fork (chord qwe-chords qy) XX (lalt rctl rmet))
+  qwe-u   (fork (chord qwe-chords qu) XX (lalt rctl rmet))
+  qwe-i   (fork (chord qwe-chords qi) XX (lalt rctl rmet))
+  qwe-o   (fork (chord qwe-chords qo) XX (lalt rctl rmet))
+  qwe-p   (fork (chord qwe-chords qp) XX (lalt rctl rmet))
   ;; second row
-  qwe-h   (fork (chord qwe-chords qh) XX (lalt lctl lmet))
-  qwe-j   (fork (tap-hold-press $tt $ht (chord qwe-chords qj) rsft) XX (lalt lctl lmet))
-  qwe-k   (fork (tap-hold-press $tt $ht (chord qwe-chords qk) rctl) XX (lalt lctl lmet))
-  qwe-l   (fork (tap-hold-press $tt $ht (chord qwe-chords ql) lalt) XX (lalt lctl lmet))
-  qwe-;   (fork (tap-hold-press $tt $ht (chord qwe-chords q;) rmet) XX (lalt lctl lmet))
+  qwe-h   (fork (chord qwe-chords qh) XX (lalt rctl rmet))
+  qwe-j   (fork (tap-hold-press $tt $ht (chord qwe-chords qj) rsft) XX  (lalt rctl rmet))
+  qwe-k   (fork (tap-hold-press $tt $ht (chord qwe-chords qk) rctl) XX  (lalt rctl rmet))
+  qwe-l   (fork (tap-hold-press $tt $ht (chord qwe-chords ql) lalt) f18 (lalt rctl rmet))
+  qwe-;   (fork (tap-hold-press $tt $ht (chord qwe-chords q;) rmet) f18 (lalt rctl rmet))
   ;; third row
-  qwe-n   (fork (chord qwe-chords qn) XX (lalt lctl lmet))
-  qwe-m   (fork (chord qwe-chords qm) XX (lalt lctl lmet))
-  qwe-,   (fork (chord qwe-chords q,) XX (lalt lctl lmet))
-  qwe-.   (fork (chord qwe-chords q.) XX (lalt lctl lmet))
-  qwe-/   (fork (chord qwe-chords q/) XX (lalt lctl lmet))
+  qwe-n   (fork (chord qwe-chords qn) XX (lalt rctl rmet))
+  qwe-m   (fork (chord qwe-chords qm) XX (lalt rctl rmet))
+  qwe-,   (fork (chord qwe-chords q,) XX (lalt rctl rmet))
+  qwe-.   (fork (chord qwe-chords q.) XX (lalt rctl rmet))
+  qwe-/   (fork (chord qwe-chords q/) XX (lalt rctl rmet))
   ;; thumbs
   qwe-pgd @ret-sym-r
   qwe-ret @bks-num
