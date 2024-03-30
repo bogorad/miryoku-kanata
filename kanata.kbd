@@ -793,8 +793,8 @@ are mapped to letters
   @lwh-ctl
 )
 
-;; this tells VoiceMeeter to 
-;; turn mice passthrough to headphones
+;; this tells VoiceMeeter to
+;; turn mic passthrough to headphones
 ;; ON  when the key is pressed
 ;; OFF when it's released
 (deffakekeys
@@ -808,20 +808,25 @@ are mapped to letters
   )
   ;; reset sound system
   sndrst (cmd C:\PROGRA~2\VB\VOICEM~1\VOICEM~4.EXE -R)
-  ;;
-  mute (cmd vmcli !Strip[3].Mute)
+  ;; send commands to VoiceMeeter
+  mute   (cmd vmcli Bus[0].Mute=1)
+  unmute (cmd vmcli Bus[0].Mute=0)
+  volu   (cmd vmcli Bus[0].Gain+=1)
+  vold   (cmd vmcli Bus[0].Gain-=1)
 )
 (deflayer U_MEDIA
   ;; left
+  ;; since I use VoiceMeeter for all sound,
+  ;;instead of volu/vold I send commands to it.
   @sndrst @n-tap  @n-qwe  @n-bas  XX
   XX      XX      XX      XX      XX
   XX      XX      XX      XX      XX
   bks             XX              XX
   ;; right
+  XX      XX      @volu   XX      XX
+  XX      prev    @vold   next    @miconoff
   XX      XX      XX      XX      XX
-  prev    vold    volu    next    @miconoff
-  XX      XX      XX      XX      XX
-  XX              pp              @mute
+  @unmute         pp              @mute
   ;; extra keys - not actually used, needed to intercept events
   @lwh-ctl
 )
