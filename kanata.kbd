@@ -12,66 +12,69 @@ https://github.com/jtroo
 This is my second attempt at Kanata configuration.
 https://github.com/jtroo/kanata/
 
-First one failed miseably because I wanted to
-just use a config from Miryoku_KMonad and neglected
-to read the fucking manual.
-
-Reasons for trying again:
+Reasons for choosing Kanata vs KMonad:
 =========================
 1. KMonad isn't friendly with the mouse.
-2. KMonad can't do chords, and I use them
+2. KMonad can't do chords, and I need them
 3. I like the idea of RUST better than HASKEL :)
+
+https://github.com/bogorad/miryoku-kanata/blob/main/kanata.kbd
 
 About layers:
 =============
-0. Closely following the logic of Miryoku/Kinesis
-1. U_BASE is the defualt (COLEMAK-DH)
-2. U_QWERTY - no key remapping, used for Cyrillic
-   with 2/3-taps for missing chars
-3. U_TAP has almost everything disabled
-   (just U_NAV to be able to return to U_BASE)
-4. U_NUM has nubmers (basically, numpad)
-5. U_SYM - my map
-6. U_FUN - for function and other seldom used keys
-7. U_MOUSE - for mouse emulation
-   and ENG/RUS swithcing
-8. U_BUTTON has buttons and HYPER-combos
-   to be inerpreted by the OS
+0. I closely follow the logic of Miryoku as applied to my Kinesis Advantage (KB500), only using 36 keys.
 
+U_BASE is the default. I use COLEMAK-DH.
+U_QWERTY - no key remapping, used for Cyrillic in Windows, with 2/3-taps for missing chars.
+U_TAP has almost everything disabled (just U_NAV to be able to return to U_BASE); I don't use it, considering removal.
+U_NUM has nubmers (basically, numpad+)
+U_SYM - my own map. This is probably my strongest deviation from Miryoku, I didn't appreciate the idea of U_SYM being shifted U_NUM, so I stole someone's idea:
+top row for shifted numbers,
+the rest of the symbols in pairs, unshifted on bottom row, shifted on middle row.
+U_FUN - for function and other seldom used keys
+U_MOUSE - for mouse emulation and ENG/RUS switching. Although since I put Cyrillic layer on a countdown timer, I rarely use direct switching on this layer; considering its removal. Mouse follows U_NAV layer (see below).
+U_BUTTON has buttons and HYPER-combos to be interpreted by the OS. Just starting.
+U_NAV is heavily modified. Although I'm a 20+year Vim user, I find fascination with h/j/k/l quite silly. Consequently, I remapped directional keys in the w/a/s/d style, for the right hand (obviously; NAV key is uner my left thumb. Also moved PgUp/PgDn. Also added {[()]} heavily used in Vim navigation - also saving precious space on U_SYM layer. The only(?) two exceptions to the left/right-hand rule - the left/right keys on C/D so that when watching Youtube I can skip boring parts using my thumb+index fingers.
+Put a lot of effort so that symbols send the same codes regardless of the input language (Cyrillic screws it up badly). Even had to create a special symbols layer for Cyrillic. Most are Unicode, but not all - my beloved ZTree is a console application and expects "real" keys.
+Put comma, dot and question mark on chords.
+Added chords for vim-save and vim-cmd.
+Make heavy use of deffakekeys - for input-language + layer switching, timed-out.
+In Windows, Hyper-keys are handled by MS PowerToys at the moment, considering a switch to Autohotkey.
+Undo/Cut/Copy/Paste are chords on z/x/c/d/v.
 Notable changes from Miryoku/Kinesis:
-=====================================
-1. U_BASE:
-1.1. Restored home-row mod-taps.
-1.1.1. All keys in U_BASE are mapped to chords.
+U_BASE:
+1.1. Restored home-row mod-taps. To fix problems due to rolls, I use fork.
+1.1.1. All keys in U_BASE are mapped to chords. Very easy to add new ones!
 1.1.2. When a key is pressed, its code is passed to chords.
 1.1.3. Chord decides if it's a single key (e.g., @met-a which is a/meta),
-1.1.4. or a chors - then ????????????????
 1.2. Added some chords
-1.3. Got tired of unintentional 'enter' taps, assigned ret to chord, disabled on kbd.
+1.3. Got tired of unintentional 'enter' taps, assigned ret to a chord, disabled on kbd.
 
-2. U_NAV
+U_NAV
 2.1. Changed direction keys: h/j/k/l with Colemak is just stupid.
 2.2. Added [{()}] for VIM-style navigation
-2.3. Moved CAPS and replaced it with CAPS-WORD/CAPS (tap-dance)
+2.3. Moved CAPS and replaced it with CAPS-WORD
 2.4. n/a
-2.5. Threw away copy/cut/paste, used chords nstead.
+2.5. Threw away copy/cut/paste, used chords instead.
 2.6. Moved home/end, pgup/pgdn.
-2.7. Added ctrl-tab/s-tab for tab navigation.
-2.8. Added alt-esc/s-esc for window navigation
-     (doesn't work with fucking MS-Egde!!)
-     window switching always resets the language to ENG.
+2.7. n/a.
+2.8. Not on this layer, but related to navigation: modified tab always resets the language to ENG.
 
-3. U_MOUSE
+U_MOUSE
 3.1. Changed direction keys to match U_NAV.
-3.2. Added language switching ENG/RUS, one more slot available
+3.2. Added language switching ENG/RUS, one more slot available; not much use any longer since Cyrillic is on a 5-second timeout
 3.3. Moved scroll wheel buttons
 3.4. This and U_MEDIA are the only two layers
-     where U_TAP/U_QWERTY/U_BASE switching is possible
+where U_TAP/U_QWERTY/U_BASE switching is possible
 3.5. Threw away copy/cut/paste, use chords in U_BASE nstead.
+3.6. Assigned DELETE key to V, easy to reach when my right hand is on the mouse.
 
-4. U_SYM was revised completely. Followed the advice
-   to keep !@#$%^&*() to use existing muscle memory.
-   Added more keys. Mapped / to \. TBD
+U_SYM was revised completely. Followed the advice
+to keep !@#$%^&*() to use existing muscle memory.
+Added more keys. Mapped / to \. TBD
+
+The real lctl key on my keyboard is not used, but defined in defsrc so that my mouse's copy/paste keys work.
+
 
 Here'a an empty layer declaration,
 so we can copy+paste it and customize
@@ -100,6 +103,7 @@ so we can copy+paste it and customize
   process-unmapped-keys yes
   block-unmapped-keys yes
   danger-enable-cmd yes
+  movemouse-inherit-accel-state yes
 )
 
 ;; global variables
@@ -154,7 +158,7 @@ so it can be serialized via (macro fake real whatever)
   fake-lsw-sym (layer-switch U_SYM)
   fake-lsw-sym-r (layer-switch U_SYM_RUS)
   ;;
-  ;; symbols to be handied by OS
+  ;; symbols to be handled by OS
   fake-hyper-a (multi rmet rctl lalt a)
   fake-hyper-b (multi rmet rctl lalt b)
   fake-hyper-c (multi rmet rctl lalt c)
@@ -173,8 +177,8 @@ so it can be serialized via (macro fake real whatever)
   )
   fake-lang-switch-rus (multi
     (on-press-fakekey fake-win-rus tap) ;; tell windows to switch layout.
-    (on-press-fakekey fake-lsw-qwe tap) ;; switch layer to U_QWERTY 
-    (on-idle-fakekey  fake-lang-switch-eng tap 5000) ;; back in 5 sec
+    (on-press-fakekey fake-lsw-qwe tap) ;; switch layer to U_QWERTY
+    (on-idle-fakekey  fake-lang-switch-eng tap 5000) ;; back in 5 sec of inactivity
   )
 )
 ;; shorter names for fake keys etc
@@ -217,26 +221,23 @@ so it can be serialized via (macro fake real whatever)
   ;;
   ;; tap-hold actions for thumb keys
   ;; left (left-2-right order)
-  ;; back to the original Miryoku layout
   esc-med   (tap-hold-press $tt $ht esc @lwh-med)
   spc-nav   (tap-hold-press $tt $ht spc @lwh-nav)
-;;  tab-mou   (tap-hold-press $tt $ht tab @lwh-mou)
   tab-mou   (tap-hold-press $tt $ht @smart-tab @lwh-mou)
   ;; right (left-2-right order)
-  del-sym   (tap-hold-press $tt $ht del @lwh-sym)
-  del-sym-r (tap-hold-press $tt $ht del @lwh-sym-r)
-  ret-fun   (tap-hold-press $tt $ht XX  @lwh-fun)
-  spc-num   (tap-hold-press $st $ht spc @lwh-num)
-  ;; back to the original Miryoku layout
   ret-sym   (tap-hold-press $tt $ht XX  @lwh-sym)
   ret-sym-r (tap-hold-press $tt $ht XX  @lwh-sym-r)
   bks-num   (tap-hold-press $st $ht bks @lwh-num)
   del-fun   (tap-hold-press $tt $ht del @lwh-fun)
+;; this was an expiriment. decided against it, doesn't add much in COLEMAK_DH
+;;  e-fun     (tap-hold-press $tt $ht e   @lwh-fun)
   ;;
 )
 
 #|
 UNICODE section
+have to resort to Unicode entry since many symbols in Cyrillic layout
+are mapped to letters
 |#
 (defalias
   ;; doesn't auto-repeat
@@ -250,7 +251,6 @@ UNICODE section
   ;; extra
   grave  (unicode `)
   tilde  (unicode ~)
-;;  backsl (multi (unicode \) (macro 10 f24))
   slash  (unicode /)
   pipe   (unicode |)
   backsl (unicode \)
@@ -291,12 +291,6 @@ UNICODE section
   n-tap (tap-dance $tt (XX @lsw-tap))
   n-qwe (tap-dance $tt (XX @lsw-qwe))
   n-bas (tap-dance $tt (XX @lsw-bas))
-  n-num (tap-dance $tt (XX @lsw-num))
-  n-nav (tap-dance $tt (XX @lsw-nav))
-  n-sym (tap-dance $tt (XX @lsw-sym))
-  n-mou (tap-dance $tt (XX @lsw-mou))
-  n-fun (tap-dance $tt (XX @lsw-fun))
-  n-med (tap-dance $tt (XX @lsw-med))
 
   ;; aliases for COPY/PASTE/etc (macro so norepeat)
   copy  (macro C-ins)
@@ -306,6 +300,7 @@ UNICODE section
   redo  (macro C-y)
 
   ;; symbols to be handied by OS
+  ;; this references Fake-keys defined above
   s-eml (on-press-fakekey fake-hyper-a tap)
   s-btc (on-press-fakekey fake-hyper-b tap)
   s-eur (on-press-fakekey fake-hyper-c tap)
@@ -327,11 +322,12 @@ UNICODE section
 (defchords bas-chords 80
   ;; b + j = caps-word (two shifts), then caps
   (kb kj) @capw
+  ;; z+/ = BUTTON layes only for the hext tap
   (kz k/) (one-shot 1000 (layer-while-held U_BUTTON))
-  ;;
+  ;; switch to Russian (it's on a timeout so no need to define the reverse key)
   (kd kh) @rus
   ;;
-  ;;
+  ;; all keys are mapped so that it's easy to create new chords
   ;; left half
   (kq            ) q
   (   kw         ) w
@@ -377,10 +373,11 @@ UNICODE section
   (   kh         ) h
   (      k,      ) comm
   (         k.   ) .
-  (            k/) (tap-hold $tt $ht / @q-mark)
+  (            k/) /
   ;;
- ;; (kl ku) S-apo
+  ;; u + y = enter, since the "real" enter is disabled
   (ku ky) ret
+  ;; , . / are chords so that they work both in English and in Russian
   (kh k,) ,
   (k, k.) .
   (k. k/) @q-mark
@@ -388,6 +385,7 @@ UNICODE section
 (defalias
   ;; left half
   ;; first row
+  ;; here I'm using fork to ignore keys if any of the HRMs of the same side are actively depressed
   bas-q   (fork (chord bas-chords kq) XX (lalt lctl lmet))
   bas-w   (fork (chord bas-chords kw) XX (lalt lctl lmet))
   bas-f   (fork (chord bas-chords kf) XX (lalt lctl lmet))
@@ -396,10 +394,10 @@ UNICODE section
   ;;second row
   ;; prevent rolls from affecting neighbouring keys (as defined in defsrc)
   ;; so a/s/d/f input results in this:
-  bas-a   (tap-hold-press $tt $ht (chord bas-chords ka) lmet)
+  bas-a   (fork (tap-hold-press $tt $ht (chord bas-chords ka) lmet) XX  (lalt lctl))
   bas-r   (fork (tap-hold-press $tt $ht (chord bas-chords kr) lalt) f18 (lctl lmet))
-  bas-s   (fork (tap-hold-press $tt $ht (chord bas-chords ks) lctl) XX (lalt))
-  bas-t   (fork (tap-hold-press $tt $ht (chord bas-chords kt) lsft) XX (lctl))
+  bas-s   (fork (tap-hold-press $tt $ht (chord bas-chords ks) lctl) XX  (lalt lmet))
+  bas-t   (fork (tap-hold-press $tt $ht (chord bas-chords kt) lsft) XX  (lctl lmet))
   bas-g   (fork (chord bas-chords kg) XX (lalt lctl lmet))
   ;; third row
   ;; keys z/x/c/d/v for undo/cut/copy/paste
@@ -425,11 +423,11 @@ UNICODE section
   ;; double-tap ' to get :
   bas-'   (chord bas-chords k')
   ;; second row
-  bas-m   (chord bas-chords km)
-  bas-n   (fork (tap-hold-press $tt $ht (chord bas-chords kn) rsft) XX (rctl))
-  bas-e   (fork (tap-hold-press $tt $ht (chord bas-chords ke) rctl) XX (lalt))
+  bas-m   (fork (chord bas-chords km) XX (lalt rctl rmet))
+  bas-n   (fork (tap-hold-press $tt $ht (chord bas-chords kn) rsft) XX  (rctl rmet))
+  bas-e   (fork (tap-hold-press $tt $ht (chord bas-chords ke) rctl) XX  (lalt rmet))
   bas-i   (fork (tap-hold-press $tt $ht (chord bas-chords ki) lalt) f18 (rctl rmet))
-  bas-o   (tap-hold-press $tt $ht (chord bas-chords ko) rmet)
+  bas-o   (fork (tap-hold-press $tt $ht (chord bas-chords ko) rmet) XX  (lalt rctl))
   ;; third row
   bas-k   (chord bas-chords kk)
   bas-h   (chord bas-chords kh)
@@ -440,6 +438,7 @@ UNICODE section
   bas-pgd @ret-sym
   bas-ret @bks-num
   bas-spc @del-fun
+;;  bas-spc @e-fun
 )
 
 #|
@@ -620,6 +619,30 @@ UNICODE section
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; experimental layer for Russian
+;; based on Leonov's work here: https://habr.com/ru/articles/717912/
+(deflayer U_RUS_LEO
+  ;; left
+;;цч к  л  б  й
+  w  r  k  ,  q
+;;жз в  н  т  д
+  ;  d  y  n  l
+;;х  п  р  м  г
+  [  g  h  v  u
+  bks        del        end
+  ;; right
+;;щх ы  я  э  ф
+  o  s  z  '  z
+;;ьъ а  о  е  с
+  m  j  j  t  c
+;;шё и  у  ю  /
+  i  b  ,  .  /
+  @qwe-pgd        @qwe-ret        @qwe-spc
+  ;; extra keys - not actually used, needed to intercept events
+  @lwh-ctl
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (deflayer U_TAP
   ;; left
   q       w       f       p       b
@@ -715,7 +738,7 @@ UNICODE section
   @rbrace home    up      end     pgup
   @rbrack left    down    right   pgdn
   @rparen XX      XX      XX      XX
-  bspc            ent             ins
+  XX              del             ins
   ;; extra keys - not actually used, needed to intercept events
   @lwh-ctl
 )
@@ -751,22 +774,18 @@ UNICODE section
   ma← (movemouse-accel-left 1 1000 1 5)
   ma↓ (movemouse-accel-down 1 1000 1 5)
   ma→ (movemouse-accel-right 1 1000 1 5)
-
-  sm (setmouse 32228 32228)
-
-  fst (movemouse-speed 200)
 )
 
 (deflayer U_MOUSE
   ;; left half
   XX      @n-tap  @n-qwe  @n-bas  XX
   met     alt     ctl     sft     XX
-  XX      XX      XX      XX      XX
+  XX      XX      XX      XX      del
   ;; thumbs
   XX              XX              XX
   ;; right half
-  @eng    XX      @ms↑    XX      @mwu
-  @rus    @ms←    @ms↓    @ms→    @mwd
+  @eng    @mwl    @ma↑    @mwr    @mwu
+  @rus    @ma←    @ma↓    @ma→    @mwd
   XX      XX      XX      XX      XX
   ;; thumbs - r/l/m mouse tapt (as opposed to clicks)
   mrtp            mltp            mmtp
@@ -821,5 +840,5 @@ UNICODE section
   ;; thumbs
   XX              XX              XX
   ;; extra keys - not actually used, needed to intercept events
-  lctrl
+  XX
 )
