@@ -109,11 +109,11 @@ so we can copy+paste it and customize
 ;; global variables
 (defvar
   tap-timeout   200
-  short-tap-timeout 120
   hold-timeout  300
+  hold-timeout-long 400
   tt $tap-timeout
-  st $short-tap-timeout
   ht $hold-timeout
+  hl $hold-timeout-long
 )
 
 ;; we'll process only these keys
@@ -227,7 +227,7 @@ so it can be serialized via (macro fake real whatever)
   ;; right (left-2-right order)
   ret-sym   (tap-hold-press $tt $ht XX  @lwh-sym)
   ret-sym-r (tap-hold-press $tt $ht XX  @lwh-sym-r)
-  bks-num   (tap-hold-press $st $ht bks @lwh-num)
+  bks-num   (tap-hold-press $tt $ht bks @lwh-num)
   del-fun   (tap-hold-press $tt $ht del @lwh-fun)
 ;; this was an expiriment. decided against it, doesn't add much in COLEMAK_DH
 ;;  e-fun     (tap-hold-press $tt $ht e   @lwh-fun)
@@ -328,25 +328,27 @@ are mapped to letters
   ;; switch to Russian (it's on a timeout so no need to define the reverse key)
   (kd kh) @rus
   ;;
+  (ka ko) lmet
+  ;;
   ;; all keys are mapped so that it's easy to create new chords
   ;; left half
-  (kq            ) q
-  (   kw         ) w
-  (      kf      ) f
-  (         kp   ) p
-  (            kb) b
+  (kq            ) (tap-hold-press-timeout $tt $hl q XX   (macro C-q))
+  (   kw         ) (tap-hold-press-timeout $tt $hl w XX   (macro C-w))
+  (      kf      ) (tap-hold-press-timeout $tt $hl f XX   (macro C-f))
+  (         kp   ) (tap-hold-press-timeout $tt $hl p XX   (macro C-p))
+  (            kb) (tap-hold-press-timeout $tt $hl b XX   (macro C-b))
   ;;
-  (ka            ) a
-  (   kr         ) r
-  (      ks      ) s
-  (         kt   ) t
-  (            kg) g
+  (ka            ) (tap-hold-press-timeout $tt $hl a lmet (macro C-a))
+  (   kr         ) (tap-hold-press-timeout $tt $hl r lalt (macro C-r))
+  (      ks      ) (tap-hold-press-timeout $tt $hl s lctl (macro C-s))
+  (         kt   ) (tap-hold-press-timeout $tt $hl t lsft (macro C-t))
+  (            kg) (tap-hold-press-timeout $tt $hl g XX   (macro C-g))
   ;;
-  (kz            ) z
-  (   kx         ) x
-  (      kc      ) c
-  (         kd   ) d
-  (            kv) v
+  (kz            ) (tap-hold-press-timeout $tt $hl z XX   (macro C-z))
+  (   kx         ) (tap-hold-press-timeout $tt $hl x XX   (macro C-x))
+  (      kc      ) (tap-hold-press-timeout $tt $hl c XX   (macro C-c))
+  (         kd   ) (tap-hold-press-timeout $tt $hl d XX   (macro C-d))
+  (            kv) (tap-hold-press-timeout $tt $hl v XX   (macro C-v))
   ;; Undo/Cut/Copy/Paste
   (kz kx         ) @undo
   (   kx kc      ) @cut
@@ -358,20 +360,20 @@ are mapped to letters
   ;; w+f = vim save
   (kw kf) (macro esc @colon w ret)
   ;; right half
-  (kj            ) j
-  (   kl         ) l
-  (      ku      ) u
-  (         ky   ) y
+  (kj            ) (tap-hold-press-timeout $tt $hl j XX   (macro C-j))
+  (   kl         ) (tap-hold-press-timeout $tt $hl l XX   (macro C-l))
+  (      ku      ) (tap-hold-press-timeout $tt $hl u XX   (macro C-u))
+  (         ky   ) (tap-hold-press-timeout $tt $hl y XX   (macro C-y))
   (            k') apo
   ;;
-  (km            ) m
-  (   kn         ) n
-  (      ke      ) e
-  (         ki   ) i
-  (            ko) o
+  (km            ) (tap-hold-press-timeout $tt $hl m XX   (macro C-m))
+  (   kn         ) (tap-hold-press-timeout $tt $hl n rsft (macro C-n))
+  (      ke      ) (tap-hold-press-timeout $tt $hl e rctl (macro C-e))
+  (         ki   ) (tap-hold-press-timeout $tt $hl i ralt (macro C-i))
+  (            ko) (tap-hold-press-timeout $tt $hl o rmet (macro C-o))
   ;;
-  (kk            ) k
-  (   kh         ) h
+  (kk            ) (tap-hold-press-timeout $tt $hl k XX   (macro C-k))
+  (   kh         ) (tap-hold-press-timeout $tt $hl h XX   (macro C-h))
   (      k,      ) comm
   (         k.   ) .
   (            k/) /
@@ -386,27 +388,31 @@ are mapped to letters
 (defalias
   ;; left half
   ;; first row
-  ;; here I'm using fork to ignore keys if any of the HRMs of the same side are actively depressed
-  bas-q   (fork (chord bas-chords kq) XX (lalt lctl lmet))
-  bas-w   (fork (chord bas-chords kw) XX (lalt lctl lmet))
-  bas-f   (fork (chord bas-chords kf) XX (lalt lctl lmet))
-  bas-p   (fork (chord bas-chords kp) XX (lalt lctl lmet))
-  bas-b   (fork (chord bas-chords kb) XX (lalt lctl lmet))
+  ;; here I'm using fork to ignore keys if any of the HRMs
+  ;; of the same side are actively depressed
+  ;; e.g., q/w/f/p/b are ignored if any ot a/r/s/t are held
+  bas-q   (fork (chord bas-chords kq) XX  (lalt lctl lmet))
+  bas-w   (fork (chord bas-chords kw) XX  (lalt lctl lmet))
+  bas-f   (fork (chord bas-chords kf) XX  (lalt lctl lmet))
+  bas-p   (fork (chord bas-chords kp) XX  (lalt lctl lmet))
+  bas-b   (fork (chord bas-chords kb) XX  (lalt lctl lmet))
   ;;second row
   ;; prevent rolls from affecting neighbouring keys (as defined in defsrc)
-  ;; so a/s/d/f input results in this:
-  bas-a         (tap-hold-press $tt $ht (chord bas-chords ka) lmet)
-  bas-r   (fork (tap-hold-press $tt $ht (chord bas-chords kr) lalt) f18 (lctl))
-  bas-s   (fork (tap-hold-press $tt $ht (chord bas-chords ks) lctl) XX  (lalt))
-  bas-t   (fork (tap-hold-press $tt $ht (chord bas-chords kt) lsft) XX  (lctl))
-  bas-g   (fork (chord bas-chords kg) XX (lalt lctl lmet))
+  ;; so a never ignored, r ignored if a is held, s ignored if r held, g if s held
+  ;; additionally send no-key (f18) if r held+released
+;;  bas-a         (tap-hold-press $tt $ht   (chord bas-chords ka) lmet)
+  bas-a         (chord bas-chords ka)
+  bas-r   (fork (chord bas-chords kr) f18 (lmet))
+  bas-s   (fork (chord bas-chords ks) XX  (lalt))
+  bas-t   (fork (chord bas-chords kt) XX  (lctl))
+  bas-g   (fork (chord bas-chords kg) XX  (lalt lctl lmet))
   ;; third row
   ;; keys z/x/c/d/v for undo/cut/copy/paste
-  bas-z   (fork (chord bas-chords kz) XX (lalt lctl lmet))
-  bas-x   (fork (chord bas-chords kx) XX (lalt lctl lmet))
-  bas-c   (fork (chord bas-chords kc) XX (lalt lctl lmet))
-  bas-d   (fork (chord bas-chords kd) XX (lalt lctl lmet))
-  bas-v   (fork (chord bas-chords kv) XX (lalt lctl lmet))
+  bas-z   (fork (chord bas-chords kz) XX  (lalt lctl lmet))
+  bas-x   (fork (chord bas-chords kx) XX  (lalt lctl lmet))
+  bas-c   (fork (chord bas-chords kc) XX  (lalt lctl lmet))
+  bas-d   (fork (chord bas-chords kd) XX  (lalt lctl lmet))
+  bas-v   (fork (chord bas-chords kv) XX  (lalt lctl lmet))
   ;; thumbs
   ;; bas-bks (chord bas-chords k-bks)
 ;;  bas-bks @bks-med
@@ -417,23 +423,23 @@ are mapped to letters
   bas-end @tab-mou
   ;; right half
   ;; first row
-  bas-j   (fork (chord bas-chords kj) XX (ralt rctl rmet))
-  bas-l   (fork (chord bas-chords kl) XX (ralt rctl rmet))
-  bas-u   (fork (chord bas-chords ku) XX (ralt rctl rmet))
-  bas-y   (fork (chord bas-chords ky) XX (ralt rctl rmet))
-  bas-'   (fork (chord bas-chords k') XX (ralt rctl rmet))
+  bas-j   (fork (chord bas-chords kj) XX  (ralt rctl rmet))
+  bas-l   (fork (chord bas-chords kl) XX  (ralt rctl rmet))
+  bas-u   (fork (chord bas-chords ku) XX  (ralt rctl rmet))
+  bas-y   (fork (chord bas-chords ky) XX  (ralt rctl rmet))
+  bas-'   (fork (chord bas-chords k') XX  (ralt rctl rmet))
   ;; second row
-  bas-m   (fork (chord bas-chords km) XX (lalt rctl rmet))
-  bas-n   (fork (tap-hold-press $tt $ht (chord bas-chords kn) rsft) XX  (rctl))
-  bas-e   (fork (tap-hold-press $tt $ht (chord bas-chords ke) rctl) XX  (ralt))
-  bas-i   (fork (tap-hold-press $tt $ht (chord bas-chords ki) ralt) f18 (rmet))
-  bas-o         (tap-hold-press $tt $ht (chord bas-chords ko) rmet)
+  bas-m   (fork (chord bas-chords km) XX  (ralt rctl rmet))
+  bas-n   (fork (chord bas-chords kn) XX  (rctl))
+  bas-e   (fork (chord bas-chords ke) XX  (ralt))
+  bas-i   (fork (chord bas-chords ki) f18 (rmet))
+  bas-o         (chord bas-chords ko)
   ;; third row
-  bas-k   (fork (chord bas-chords kk) XX (ralt rctl rmet))
-  bas-h   (fork (chord bas-chords kh) XX (ralt rctl rmet))
-  bas-,   (fork (chord bas-chords k,) XX (ralt rctl rmet))
-  bas-.   (fork (chord bas-chords k.) XX (ralt rctl rmet))
-  bas-/   (fork (chord bas-chords k/) XX (ralt rctl rmet))
+  bas-k   (fork (chord bas-chords kk) XX  (ralt rctl rmet))
+  bas-h   (fork (chord bas-chords kh) XX  (ralt rctl rmet))
+  bas-,   (fork (chord bas-chords k,) XX  (ralt rctl rmet))
+  bas-.   (fork (chord bas-chords k.) XX  (ralt rctl rmet))
+  bas-/   (fork (chord bas-chords k/) XX  (ralt rctl rmet))
   ;; thumbs
   bas-pgd @ret-sym
   bas-ret @bks-num
@@ -446,8 +452,7 @@ are mapped to letters
  home-row modifiers:
   MACS/WACS
  extra:
-   z or / => button layer
-   x or . => right alt
+   z + / => button layer
 
  thumb special layer mappings - left side:
  (left-to-right):
@@ -459,8 +464,8 @@ are mapped to letters
  thumb special layer mappings - right side:
  (left-to-right):
 
- backspace => symbols
- enter     => numbers
+ enter (disabled) => symbols
+ backspace => numbers
  delete    => functions
 |#
 
@@ -738,7 +743,7 @@ are mapped to letters
   @rbrace home    up      end     pgup
   @rbrack left    down    right   pgdn
   @rparen XX      XX      XX      XX
-  XX              del             ins
+  M-tab           del             ins
   ;; extra keys - not actually used, needed to intercept events
   @lwh-ctl
 )
