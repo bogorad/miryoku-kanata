@@ -259,6 +259,7 @@ are mapped to letters
   semicl (unicode ;)
 ;;
   plus   (unicode +)
+  equal  (unicode =)
   minus  (unicode -)
   unders (unicode _)
 ;;
@@ -394,10 +395,10 @@ are mapped to letters
   ;;second row
   ;; prevent rolls from affecting neighbouring keys (as defined in defsrc)
   ;; so a/s/d/f input results in this:
-  bas-a   (fork (tap-hold-press $tt $ht (chord bas-chords ka) lmet) XX  (lalt lctl))
-  bas-r   (fork (tap-hold-press $tt $ht (chord bas-chords kr) lalt) f18 (lctl lmet))
-  bas-s   (fork (tap-hold-press $tt $ht (chord bas-chords ks) lctl) XX  (lalt lmet))
-  bas-t   (fork (tap-hold-press $tt $ht (chord bas-chords kt) lsft) XX  (lctl lmet))
+  bas-a         (tap-hold-press $tt $ht (chord bas-chords ka) lmet)
+  bas-r   (fork (tap-hold-press $tt $ht (chord bas-chords kr) lalt) f18 (lctl))
+  bas-s   (fork (tap-hold-press $tt $ht (chord bas-chords ks) lctl) XX  (lalt))
+  bas-t   (fork (tap-hold-press $tt $ht (chord bas-chords kt) lsft) XX  (lctl))
   bas-g   (fork (chord bas-chords kg) XX (lalt lctl lmet))
   ;; third row
   ;; keys z/x/c/d/v for undo/cut/copy/paste
@@ -416,24 +417,23 @@ are mapped to letters
   bas-end @tab-mou
   ;; right half
   ;; first row
-  bas-j   (chord bas-chords kj)
-  bas-l   (chord bas-chords kl)
-  bas-u   (chord bas-chords ku)
-  bas-y   (chord bas-chords ky)
-  ;; double-tap ' to get :
-  bas-'   (chord bas-chords k')
+  bas-j   (fork (chord bas-chords kj) XX (ralt rctl rmet))
+  bas-l   (fork (chord bas-chords kl) XX (ralt rctl rmet))
+  bas-u   (fork (chord bas-chords ku) XX (ralt rctl rmet))
+  bas-y   (fork (chord bas-chords ky) XX (ralt rctl rmet))
+  bas-'   (fork (chord bas-chords k') XX (ralt rctl rmet))
   ;; second row
   bas-m   (fork (chord bas-chords km) XX (lalt rctl rmet))
-  bas-n   (fork (tap-hold-press $tt $ht (chord bas-chords kn) rsft) XX  (rctl rmet))
-  bas-e   (fork (tap-hold-press $tt $ht (chord bas-chords ke) rctl) XX  (lalt rmet))
-  bas-i   (fork (tap-hold-press $tt $ht (chord bas-chords ki) lalt) f18 (rctl rmet))
-  bas-o   (fork (tap-hold-press $tt $ht (chord bas-chords ko) rmet) XX  (lalt rctl))
+  bas-n   (fork (tap-hold-press $tt $ht (chord bas-chords kn) rsft) XX  (rctl))
+  bas-e   (fork (tap-hold-press $tt $ht (chord bas-chords ke) rctl) XX  (ralt))
+  bas-i   (fork (tap-hold-press $tt $ht (chord bas-chords ki) ralt) f18 (rmet))
+  bas-o         (tap-hold-press $tt $ht (chord bas-chords ko) rmet)
   ;; third row
-  bas-k   (chord bas-chords kk)
-  bas-h   (chord bas-chords kh)
-  bas-,   (chord bas-chords k,)
-  bas-.   (chord bas-chords k.)
-  bas-/   (chord bas-chords k/)
+  bas-k   (fork (chord bas-chords kk) XX (ralt rctl rmet))
+  bas-h   (fork (chord bas-chords kh) XX (ralt rctl rmet))
+  bas-,   (fork (chord bas-chords k,) XX (ralt rctl rmet))
+  bas-.   (fork (chord bas-chords k.) XX (ralt rctl rmet))
+  bas-/   (fork (chord bas-chords k/) XX (ralt rctl rmet))
   ;; thumbs
   bas-pgd @ret-sym
   bas-ret @bks-num
@@ -563,10 +563,10 @@ are mapped to letters
   qwe-r   (fork (chord qwe-chords qr) XX (lalt lctl lmet))
   qwe-t   (fork (chord qwe-chords qt) XX (lalt lctl lmet))
   ;; second row
-  qwe-a   (fork (tap-hold-press $tt $ht (chord qwe-chords qa) lmet) f18 (lalt lctl lmet))
-  qwe-s   (fork (tap-hold-press $tt $ht (chord qwe-chords qs) lalt) f18 (lalt lctl lmet))
-  qwe-d   (fork (tap-hold-press $tt $ht (chord qwe-chords qd) lctl) XX  (lalt lctl lmet))
-  qwe-f   (fork (tap-hold-press $tt $ht (chord qwe-chords qf) lsft) XX  (lalt lctl lmet))
+  qwe-a         (tap-hold-press $tt $ht (chord qwe-chords qa) lmet)
+  qwe-s   (fork (tap-hold-press $tt $ht (chord qwe-chords qs) lalt) f18 (lmet))
+  qwe-d   (fork (tap-hold-press $tt $ht (chord qwe-chords qd) lctl) XX  (lctl))
+  qwe-f   (fork (tap-hold-press $tt $ht (chord qwe-chords qf) lsft) XX  (lctl))
   qwe-g   (fork (chord qwe-chords qg) XX (lalt rctl lmet))
   ;; third row
   qwe-z   (fork (chord qwe-chords qz) XX (lalt lctl lmet))
@@ -580,23 +580,23 @@ are mapped to letters
   qwe-end @tab-mou
   ;; right half(chord qwe-chords qz)
   ;; first row
-  qwe-y   (fork (chord qwe-chords qy) XX (lalt rctl rmet))
-  qwe-u   (fork (chord qwe-chords qu) XX (lalt rctl rmet))
-  qwe-i   (fork (chord qwe-chords qi) XX (lalt rctl rmet))
-  qwe-o   (fork (chord qwe-chords qo) XX (lalt rctl rmet))
-  qwe-p   (fork (chord qwe-chords qp) XX (lalt rctl rmet))
+  qwe-y   (fork (chord qwe-chords qy) XX (ralt rctl rmet))
+  qwe-u   (fork (chord qwe-chords qu) XX (ralt rctl rmet))
+  qwe-i   (fork (chord qwe-chords qi) XX (ralt rctl rmet))
+  qwe-o   (fork (chord qwe-chords qo) XX (ralt rctl rmet))
+  qwe-p   (fork (chord qwe-chords qp) XX (ralt rctl rmet))
   ;; second row
   qwe-h   (fork (chord qwe-chords qh) XX (lalt rctl rmet))
-  qwe-j   (fork (tap-hold-press $tt $ht (chord qwe-chords qj) rsft) XX  (lalt rctl rmet))
-  qwe-k   (fork (tap-hold-press $tt $ht (chord qwe-chords qk) rctl) XX  (lalt rctl rmet))
-  qwe-l   (fork (tap-hold-press $tt $ht (chord qwe-chords ql) lalt) f18 (lalt rctl rmet))
-  qwe-;   (fork (tap-hold-press $tt $ht (chord qwe-chords q;) rmet) f18 (lalt rctl rmet))
+  qwe-j   (fork (tap-hold-press $tt $ht (chord qwe-chords qj) rsft) XX  (rctl))
+  qwe-k   (fork (tap-hold-press $tt $ht (chord qwe-chords qk) rctl) XX  (lalt))
+  qwe-l   (fork (tap-hold-press $tt $ht (chord qwe-chords ql) lalt) f18 (rmet))
+  qwe-;         (tap-hold-press $tt $ht (chord qwe-chords q;) rmet)
   ;; third row
-  qwe-n   (fork (chord qwe-chords qn) XX (lalt rctl rmet))
-  qwe-m   (fork (chord qwe-chords qm) XX (lalt rctl rmet))
-  qwe-,   (fork (chord qwe-chords q,) XX (lalt rctl rmet))
-  qwe-.   (fork (chord qwe-chords q.) XX (lalt rctl rmet))
-  qwe-/   (fork (chord qwe-chords q/) XX (lalt rctl rmet))
+  qwe-n   (fork (chord qwe-chords qn) XX (ralt rctl rmet))
+  qwe-m   (fork (chord qwe-chords qm) XX (ralt rctl rmet))
+  qwe-,   (fork (chord qwe-chords q,) XX (ralt rctl rmet))
+  qwe-.   (fork (chord qwe-chords q.) XX (ralt rctl rmet))
+  qwe-/   (fork (chord qwe-chords q/) XX (ralt rctl rmet))
   ;; thumbs
   qwe-pgd @ret-sym-r
   qwe-ret @bks-num
@@ -667,7 +667,7 @@ are mapped to letters
   ;; right
   XX      XX      XX      XX      XX
   ret     sft     ctl     alt     met
-  met     bspc    tab     caps    \
+  met     bspc    tab     caps    @backsl
   XX              XX              XX
   ;; extra keys - not actually used, needed to intercept events
   @lwh-ctl
@@ -677,9 +677,9 @@ are mapped to letters
 (deflayer U_SYM
   ;; left
   S-1     S-2     S-3     S-4     S-5
-  S-scln  S-`     S-apo   kp+     @pipe
-  scln    `       apo     eql     @backsl
-  @lparen         @rparen         S--
+  S-scln  S-`     S-apo   S-eql   S-\
+  scln    `       apo     eql     \
+  S-9             S-0             S--
   ;; right
   S-6     S-7     S-8     S-9     S-0
   XX      lsft    lctl    lalt    lmet
@@ -693,13 +693,13 @@ are mapped to letters
 (deflayer U_SYM_RUS
   ;; left
   S-1     @at     @hash   @dollar @percen
-  @colon  @tilde  S-2     kp+     @pipe
-  @semicl @grave  @apo    eql     @backsl
+  @colon  @tilde  S-2     @plus   @pipe
+  @semicl @grave  @apo    @equal  @backsl
   @lparen         @rparen         @unders
   ;; right
   @caret  @ampers S-8     S-9     S-0
   XX      lsft    lctl    lalt    lmet
-  XX      bspc    tab     caps    \
+  XX      bspc    tab     caps    @backsl
   XX              XX              XX
   ;; extra keys - not actually used, needed to intercept events
   @lwh-ctl
@@ -711,10 +711,10 @@ are mapped to letters
   f11     f4      f5      f6      slck
   f10     f1      f2      f3      pause
   comp            spc             tab
-  ;; rightRT_BUS
+  ;; right
   XX      @n-bas  @n-qwe  @n-tap  XX
   ret     sft     ctl     alt     met
-  bspc    spc     tab     .       /
+  bspc    bspc    tab     caps    @backsl
   XX              XX              XX
   ;; extra keys - not actually used, needed to intercept events
   @lwh-ctl
@@ -795,12 +795,12 @@ are mapped to letters
 
 ;; this tells VoiceMeeter to
 ;; turn mic passthrough to headphones
-;; ON  when the key is pressed
-;; OFF when it's released
 (deffakekeys
   micon  (cmd vmcli Strip[1].Gate=3   Strip[1].A1=1 Strip[1].B2=0)
   micoff (cmd vmcli Strip[1].Gate=7.4 Strip[1].A1=0 Strip[1].B2=1)
 )
+;; ON  when the key is pressed
+;; OFF when it's released
 (defalias
   miconoff (multi
     (on-press-fakekey   micon  tap)
