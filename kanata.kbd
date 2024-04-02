@@ -159,17 +159,17 @@ so it can be serialized via (macro fake real whatever)
   fake-lsw-sym-r (layer-switch U_SYM_RUS)
   ;;
   ;; symbols to be handled by OS
-  fake-hyper-a (multi rmet rctl lalt a)
-  fake-hyper-b (multi rmet rctl lalt b)
-  fake-hyper-c (multi rmet rctl lalt c)
-  fake-hyper-d (multi rmet rctl lalt d)
-  fake-hyper-e (multi rmet rctl lalt e)
-  fake-hyper-f (multi rmet rctl lalt f)
-  fake-hyper-g (multi rmet rctl lalt g)
-  fake-hyper-h (multi rmet rctl lalt h)
-  fake-hyper-i (multi rmet rctl lalt i)
-  fake-hyper-j (multi rmet rctl lalt j)
-  fake-hyper-k (multi rmet rctl lalt k)
+  fake-hyper-a (multi rmet rctl ralt a)
+  fake-hyper-b (multi lmet lctl lalt b)
+  fake-hyper-c (multi lmet lctl lalt c)
+  fake-hyper-d (multi lmet lctl lalt d)
+  fake-hyper-e (multi lmet lctl lalt e)
+  fake-hyper-f (multi lmet lctl lalt f)
+  fake-hyper-g (multi lmet lctl lalt g)
+  fake-hyper-h (multi lmet lctl lalt h)
+  fake-hyper-i (multi lmet lctl lalt i)
+  fake-hyper-j (multi lmet lctl lalt j)
+  fake-hyper-k (multi lmet lctl lalt k)
   ;;
   fake-lang-switch-eng (multi
     (on-press-fakekey fake-win-eng tap) ;; tell windows to switch layout.
@@ -332,23 +332,24 @@ are mapped to letters
   ;;
   ;; all keys are mapped so that it's easy to create new chords
   ;; left half
-  (kq            ) (tap-hold-press-timeout $tt $hl q XX   (macro C-q))
-  (   kw         ) (tap-hold-press-timeout $tt $hl w XX   (macro C-w))
-  (      kf      ) (tap-hold-press-timeout $tt $hl f XX   (macro C-f))
-  (         kp   ) (tap-hold-press-timeout $tt $hl p XX   (macro C-p))
-  (            kb) (tap-hold-press-timeout $tt $hl b XX   (macro C-b))
+  (kq            ) q ;; (tap-hold-press-timeout $tt $hl q XX   (macro C-q))
+  (   kw         ) w ;; (tap-hold-press-timeout $tt $hl w XX   (macro C-w))
+  (      kf      ) f ;; (tap-hold-press-timeout $tt $hl f XX   (macro C-f))
+  (         kp   ) p ;; (tap-hold-press-timeout $tt $hl p XX   (macro C-p))
+  (            kb) b ;; (tap-hold-press-timeout $tt $hl b XX   (macro C-b))
   ;;
-  (ka            ) (tap-hold-press-timeout $tt $hl a lmet (macro C-a))
-  (   kr         ) (tap-hold-press-timeout $tt $hl r lalt (macro C-r))
-  (      ks      ) (tap-hold-press-timeout $tt $hl s lctl (macro C-s))
-  (         kt   ) (tap-hold-press-timeout $tt $hl t lsft (macro C-t))
-  (            kg) (tap-hold-press-timeout $tt $hl g XX   (macro C-g))
+  (ka            ) (tap-hold-press-timeout $tt $hl a lmet lmet) ;; (macro C-a))
+  (   kr         ) (tap-hold-press-timeout $tt $hl r lalt lalt) ;; (macro C-r))
+  (      ks      ) (tap-hold-press-timeout $tt $hl s lctl lctl) ;; (macro C-s))
+;;  (         kt   ) (tap-hold-press-timeout $tt $hl t lsft lsft) ;; (macro C-t))
+  (         kt   ) (tap-hold-press $tt $ht t (one-shot-press 2000 lsft))
+  (            kg) g ;; (tap-hold-press-timeout $tt $hl g XX   (macro C-g))
   ;;
-  (kz            ) (tap-hold-press-timeout $tt $hl z XX   (macro C-z))
-  (   kx         ) (tap-hold-press-timeout $tt $hl x XX   (macro C-x))
-  (      kc      ) (tap-hold-press-timeout $tt $hl c XX   (macro C-c))
-  (         kd   ) (tap-hold-press-timeout $tt $hl d XX   (macro C-d))
-  (            kv) (tap-hold-press-timeout $tt $hl v XX   (macro C-v))
+  (kz            ) z ;; (tap-hold-press-timeout $tt $hl z XX   (macro C-z))
+  (   kx         ) x ;; (tap-hold-press-timeout $tt $hl x XX   (macro C-x))
+  (      kc      ) c ;; (tap-hold-press-timeout $tt $hl c XX   (macro C-c))
+  (         kd   ) d ;; (tap-hold-press-timeout $tt $hl d XX   (macro C-d))
+  (            kv) v ;; (tap-hold-press-timeout $tt $hl v XX   (macro C-v))
   ;; Undo/Cut/Copy/Paste
   (kz kx         ) @undo
   (   kx kc      ) @cut
@@ -360,20 +361,20 @@ are mapped to letters
   ;; w+f = vim save
   (kw kf) (macro esc @colon w ret)
   ;; right half
-  (kj            ) (tap-hold-press-timeout $tt $hl j XX   (macro C-j))
-  (   kl         ) (tap-hold-press-timeout $tt $hl l XX   (macro C-l))
-  (      ku      ) (tap-hold-press-timeout $tt $hl u XX   (macro C-u))
-  (         ky   ) (tap-hold-press-timeout $tt $hl y XX   (macro C-y))
+  (kj            ) j ;; (tap-hold-press-timeout $tt $hl j XX   (macro C-j))
+  (   kl         ) l ;; (tap-hold-press-timeout $tt $hl l XX   (macro C-l))
+  (      ku      ) u ;; (tap-hold-press-timeout $tt $hl u XX   (macro C-u))
+  (         ky   ) y ;; (tap-hold-press-timeout $tt $hl y XX   (macro C-y))
   (            k') apo
   ;;
-  (km            ) (tap-hold-press-timeout $tt $hl m XX   (macro C-m))
-  (   kn         ) (tap-hold-press-timeout $tt $hl n rsft (macro C-n))
-  (      ke      ) (tap-hold-press-timeout $tt $hl e rctl (macro C-e))
-  (         ki   ) (tap-hold-press-timeout $tt $hl i ralt (macro C-i))
-  (            ko) (tap-hold-press-timeout $tt $hl o rmet (macro C-o))
+  (km            ) m ;; (tap-hold-press-timeout $tt $hl m XX   (macro C-m))
+  (   kn         ) (tap-hold-press $tt $ht n (one-shot-press 2000 lsft))
+  (      ke      ) (tap-hold-press-timeout $tt $ht e rctl rctl) ;; (macro C-e))
+  (         ki   ) (tap-hold-press-timeout $tt $ht i ralt ralt) ;; (macro C-i))
+  (            ko) (tap-hold-press-timeout $tt $ht o rmet rmet) ;; (macro C-o))
   ;;
-  (kk            ) (tap-hold-press-timeout $tt $hl k XX   (macro C-k))
-  (   kh         ) (tap-hold-press-timeout $tt $hl h XX   (macro C-h))
+  (kk            ) k ;; (tap-hold-press-timeout $tt $hl k XX   (macro C-k))
+  (   kh         ) h ;; (tap-hold-press-timeout $tt $hl h XX   (macro C-h))
   (      k,      ) comm
   (         k.   ) .
   (            k/) /
