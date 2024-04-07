@@ -141,7 +141,7 @@ This section is here because of the way Kanata processes
 events. The idea is that FakeKeys make an action atomic,
 so it can be serialized via (macro fake real whatever)
 |#
-(deffakekeys
+(defvirtualkeys
   ;; win-input switching - add more here
   fake-win-eng (multi (release-key rctl) (release-key rmet) lalt lsft 0)
   fake-win-rus (multi (release-key rctl) (release-key rmet) lalt lsft 1)
@@ -156,7 +156,7 @@ so it can be serialized via (macro fake real whatever)
   fake-lsw-qwe (layer-switch U_QWERTY)
   fake-lsw-tap (layer-switch U_TAP)
   fake-lsw-sym (layer-switch U_SYM)
-  fake-lsw-sym-r (layer-switch U_SYM_RUS)
+  fake-lsw-syr (layer-switch U_SYM_RUS)
   ;;
   ;; symbols to be handled by OS
   fake-hyper-a (multi rmet rctl ralt a)
@@ -172,31 +172,31 @@ so it can be serialized via (macro fake real whatever)
   fake-hyper-k (multi lmet lctl lalt k)
   ;;
   fake-lang-switch-eng (multi
-    (on-press-fakekey fake-win-eng tap) ;; tell windows to switch layout.
-    (on-press-fakekey fake-lsw-bas tap) ;; switch layer to U_BASE
+    (on-press     tap-virtualkey fake-win-eng)
+    (on-press     tap-virtualkey fake-lsw-bas)
   )
   fake-lang-switch-rus (multi
-    (on-press-fakekey fake-win-rus tap) ;; tell windows to switch layout.
-    (on-press-fakekey fake-lsw-qwe tap) ;; switch layer to U_QWERTY
-    (on-idle-fakekey  fake-lang-switch-eng tap 5000) ;; back in 5 sec of inactivity
+    (on-press     tap-virtualkey fake-win-rus)
+    (on-press     tap-virtualkey fake-lsw-qwe)
+    (on-idle 5000 tap-virtualkey fake-lang-switch-eng)
   )
 )
 ;; shorter names for fake keys etc
 (defalias
   ;; shorter names for layer switches
-  lsw-bas (on-press-fakekey fake-lsw-bas tap)
-  lsw-fun (on-press-fakekey fake-lsw-fun tap)
-  lsw-nav (on-press-fakekey fake-lsw-nav tap)
-  lsw-num (on-press-fakekey fake-lsw-num tap)
-  lsw-med (on-press-fakekey fake-lsw-med tap)
-  lsw-mou (on-press-fakekey fake-lsw-mou tap)
-  lsw-qwe (on-press-fakekey fake-lsw-qwe tap)
-  lsw-tap (on-press-fakekey fake-lsw-tap tap)
-  lsw-sym (on-press-fakekey fake-lsw-sym tap)
-  lsw-sym-r (on-press-fakekey fake-lsw-sym-r tap)
+  lsw-bas (on-press tap-virtualkey fake-lsw-bas)
+  lsw-fun (on-press tap-virtualkey fake-lsw-fun)
+  lsw-nav (on-press tap-virtualkey fake-lsw-nav)
+  lsw-num (on-press tap-virtualkey fake-lsw-num)
+  lsw-med (on-press tap-virtualkey fake-lsw-med)
+  lsw-mou (on-press tap-virtualkey fake-lsw-mou)
+  lsw-qwe (on-press tap-virtualkey fake-lsw-qwe)
+  lsw-tap (on-press tap-virtualkey fake-lsw-tap)
+  lsw-sym (on-press tap-virtualkey fake-lsw-sym)
+  lsw-syr (on-press tap-virtualkey fake-lsw-sym)
   ;; shorter names for input swithing in Windows
-  eng (on-press-fakekey fake-lang-switch-eng tap)
-  rus (on-press-fakekey fake-lang-switch-rus tap)
+  eng (on-press tap-virtualkey fake-lang-switch-eng)
+  rus (on-press tap-virtualkey fake-lang-switch-rus)
 )
 
 ;; aliases - so we can use short labels in layer maps
@@ -211,7 +211,7 @@ so it can be serialized via (macro fake real whatever)
   lwh-med   (layer-while-held U_MEDIA)
   lwh-mou   (layer-while-held U_MOUSE)
   lwh-sym   (layer-while-held U_SYM)
-  lwh-sym-r (layer-while-held U_SYM_RUS)
+  lwh-syr   (layer-while-held U_SYM_RUS)
   lwh-ctl   (layer-while-held U_CTL)
   ;;
   ;; swetch to English and then send tab
@@ -226,7 +226,7 @@ so it can be serialized via (macro fake real whatever)
   tab-mou   (tap-hold-press $tt $ht @smart-tab @lwh-mou)
   ;; right (left-2-right order)
   ret-sym   (tap-hold-press $tt $ht XX  @lwh-sym)
-  ret-sym-r (tap-hold-press $tt $ht XX  @lwh-sym-r)
+  ret-syr   (tap-hold-press $tt $ht XX  @lwh-syr)
   bks-num   (tap-hold-press $tt $ht bks @lwh-num)
   del-fun   (tap-hold-press $tt $ht del @lwh-fun)
 ;; this was an expiriment. decided against it, doesn't add much in COLEMAK_DH
@@ -302,21 +302,35 @@ are mapped to letters
 
   ;; symbols to be handied by OS
   ;; this references Fake-keys defined above
-  s-eml (on-press-fakekey fake-hyper-a tap)
-  s-btc (on-press-fakekey fake-hyper-b tap)
-  s-eur (on-press-fakekey fake-hyper-c tap)
-  s-tm  (on-press-fakekey fake-hyper-d tap)
-  s-hyE (on-press-fakekey fake-hyper-e tap)
-  s-hyF (on-press-fakekey fake-hyper-f tap)
-  s-hyG (on-press-fakekey fake-hyper-g tap)
-  s-hyH (on-press-fakekey fake-hyper-h tap)
-  s-hyI (on-press-fakekey fake-hyper-i tap)
-  s-hyJ (on-press-fakekey fake-hyper-j tap)
-  s-hyK (on-press-fakekey fake-hyper-k tap)
+  s-eml (on-press tap-virtualkey fake-hyper-a)
+  s-btc (on-press tap-virtualkey fake-hyper-b)
+  s-eur (on-press tap-virtualkey fake-hyper-c)
+  s-tm  (on-press tap-virtualkey fake-hyper-d)
+  s-hyE (on-press tap-virtualkey fake-hyper-e)
+  s-hyF (on-press tap-virtualkey fake-hyper-f)
+  s-hyG (on-press tap-virtualkey fake-hyper-g)
+  s-hyH (on-press tap-virtualkey fake-hyper-h)
+  s-hyI (on-press tap-virtualkey fake-hyper-i)
+  s-hyJ (on-press tap-virtualkey fake-hyper-j)
+  s-hyK (on-press tap-virtualkey fake-hyper-k)
 
   ;; caps-word(for 3 sec) or caps
 ;;  capw    (tap-hold-press $tt $ht (caps-word 3000) caps)
   capw  (caps-word 3000)
+  ;;
+  ;; The following section takes care of HRM+rolls.
+  ;; smart-t: s+t
+  ;; "st" or normal "t"
+  smart-t (switch
+    ((input-history real d 2)) (macro (unmod s) (unmod t)) break
+    () (tap-hold-press $tt $ht t (one-shot-press 2000 lsft)) break
+  )
+  ;; smart-n: e+n
+  ;; "en" or normal "n"
+  smart-n (switch
+    ((input-history real k 2)) (macro (unmod e) (unmod n)) break
+    () (tap-hold-press $tt $ht n (one-shot-press 2000 lsft)) break
+  )
 )
 
 ;; U_BAS: Chords for home row and more:
@@ -341,7 +355,6 @@ are mapped to letters
   (ka            ) (tap-hold-press-timeout $tt $hl a lmet lmet) ;; (macro C-a))
   (   kr         ) (tap-hold-press-timeout $tt $hl r lalt lalt) ;; (macro C-r))
   (      ks      ) (tap-hold-press-timeout $tt $hl s lctl lctl) ;; (macro C-s))
-;;  (         kt   ) (tap-hold-press-timeout $tt $hl t lsft lsft) ;; (macro C-t))
   (         kt   ) (tap-hold-press $tt $ht t (one-shot-press 2000 lsft))
   (            kg) g ;; (tap-hold-press-timeout $tt $hl g XX   (macro C-g))
   ;;
@@ -405,7 +418,7 @@ are mapped to letters
   bas-a         (chord bas-chords ka)
   bas-r   (fork (chord bas-chords kr) f18 (lmet))
   bas-s   (fork (chord bas-chords ks) XX  (lalt))
-  bas-t   (fork (chord bas-chords kt) XX  (lctl))
+  bas-t   (fork (chord bas-chords kt) @smart-t (lctl))
   bas-g   (fork (chord bas-chords kg) XX  (lalt lctl lmet))
   ;; third row
   ;; keys z/x/c/d/v for undo/cut/copy/paste
@@ -431,7 +444,7 @@ are mapped to letters
   bas-'   (fork (chord bas-chords k') XX  (ralt rctl rmet))
   ;; second row
   bas-m   (fork (chord bas-chords km) XX  (ralt rctl rmet))
-  bas-n   (fork (chord bas-chords kn) XX  (rctl))
+  bas-n   (fork (chord bas-chords kn) @smart-n (rctl))
   bas-e   (fork (chord bas-chords ke) XX  (ralt))
   bas-i   (fork (chord bas-chords ki) f18 (rmet))
   bas-o         (chord bas-chords ko)
@@ -500,6 +513,35 @@ are mapped to letters
   ;; cyrillic   ф/х
   cyr-fh   (tap-dance $tt (o [))
   ;; for {[()]} -- TBD
+  ;;
+  ;; The following section takes care of HRM+rolls.
+  ;; smart-f
+  ;; "df" or normal "f"
+  ;; "sf" or normal "f"
+  smart-f (switch
+    ((input-history real d 2)) (macro (unmod d) (unmod f)) break
+    ((input-history real s 2)) (macro (unmod s) (unmod f)) break
+    () (tap-hold-press $tt $ht f (one-shot-press 2000 lsft)) break
+  )
+  ;; smart-j
+  ;; "kj" or normal "j"
+  ;; "lj" or normal "j"
+  smart-j (switch
+    ((input-history real k 2)) (macro (unmod k) (unmod j)) break
+    ((input-history real l 2)) (macro (unmod l) (unmod j)) break
+    () (tap-hold-press $tt $ht j (one-shot-press 2000 lsft)) break
+  )
+  ;; smart-m
+  smart-m (switch
+    ((input-history real k 2)) (macro (unmod k) (unmod m)) break
+    () (tap-hold-press $tt $ht m (one-shot-press 2000 lsft)) break
+  )
+  ;; smart-v
+  smart-v (switch
+    ((input-history real d 2)) (macro (unmod d) (unmod v)) break
+    () (tap-hold-press $tt $ht v (one-shot-press 2000 lsft)) break
+  )
+
 )
 
 ;; U_QWERTY:
@@ -572,13 +614,13 @@ are mapped to letters
   qwe-a         (tap-hold-press $tt $ht (chord qwe-chords qa) lmet)
   qwe-s   (fork (tap-hold-press $tt $ht (chord qwe-chords qs) lalt) f18 (lmet))
   qwe-d   (fork (tap-hold-press $tt $ht (chord qwe-chords qd) lctl) XX  (lctl))
-  qwe-f   (fork (tap-hold-press $tt $ht (chord qwe-chords qf) lsft) XX  (lctl))
+  qwe-f   (fork (tap-hold-press $tt $ht (chord qwe-chords qf) lsft) @smart-f (lctl))
   qwe-g   (fork (chord qwe-chords qg) XX (lalt rctl lmet))
   ;; third row
   qwe-z   (fork (chord qwe-chords qz) XX (lalt lctl lmet))
   qwe-x   (fork (chord qwe-chords qx) XX (lalt lctl lmet))
   qwe-c   (fork (chord qwe-chords qc) XX (lalt lctl lmet))
-  qwe-v   (fork (chord qwe-chords qv) XX (lalt lctl lmet))
+  qwe-v   (fork (chord qwe-chords qv) @smart-v (lalt lctl lmet))
   qwe-b   (fork (chord qwe-chords qb) XX (lalt lctl lmet))
   ;; thumbs
   qwe-bks @esc-med
@@ -592,19 +634,19 @@ are mapped to letters
   qwe-o   (fork (chord qwe-chords qo) XX (ralt rctl rmet))
   qwe-p   (fork (chord qwe-chords qp) XX (ralt rctl rmet))
   ;; second row
-  qwe-h   (fork (chord qwe-chords qh) XX (lalt rctl rmet))
-  qwe-j   (fork (tap-hold-press $tt $ht (chord qwe-chords qj) rsft) XX  (rctl))
-  qwe-k   (fork (tap-hold-press $tt $ht (chord qwe-chords qk) rctl) XX  (lalt))
-  qwe-l   (fork (tap-hold-press $tt $ht (chord qwe-chords ql) lalt) f18 (rmet))
+  qwe-h   (fork (chord qwe-chords qh) XX (ralt rctl rmet))
+  qwe-j   (fork (tap-hold-press $tt $ht (chord qwe-chords qj) rsft) @smart-j (rctl ralt))
+  qwe-k   (fork (tap-hold-press $tt $ht (chord qwe-chords qk) rctl) XX  (ralt))
+  qwe-l   (fork (tap-hold-press $tt $ht (chord qwe-chords ql) ralt) f18 (rmet))
   qwe-;         (tap-hold-press $tt $ht (chord qwe-chords q;) rmet)
   ;; third row
   qwe-n   (fork (chord qwe-chords qn) XX (ralt rctl rmet))
-  qwe-m   (fork (chord qwe-chords qm) XX (ralt rctl rmet))
+  qwe-m   (fork (chord qwe-chords qm) @smart-m (ralt rctl rmet))
   qwe-,   (fork (chord qwe-chords q,) XX (ralt rctl rmet))
   qwe-.   (fork (chord qwe-chords q.) XX (ralt rctl rmet))
   qwe-/   (fork (chord qwe-chords q/) XX (ralt rctl rmet))
   ;; thumbs
-  qwe-pgd @ret-sym-r
+  qwe-pgd @ret-syr
   qwe-ret @bks-num
   qwe-spc @del-fun
 )
@@ -801,7 +843,7 @@ are mapped to letters
 
 ;; this tells VoiceMeeter to
 ;; turn mic passthrough to headphones
-(deffakekeys
+(defvirtualkeys
   micon  (cmd vmcli Strip[1].Gate=3   Strip[1].A1=1 Strip[1].B2=0)
   micoff (cmd vmcli Strip[1].Gate=7.4 Strip[1].A1=0 Strip[1].B2=1)
 )
@@ -809,8 +851,8 @@ are mapped to letters
 ;; OFF when it's released
 (defalias
   miconoff (multi
-    (on-press-fakekey   micon  tap)
-    (on-release-fakekey micoff tap)
+    (on-press tap-virtualkey micon)
+    (on-release tap-virtualkey micoff)
   )
   ;; reset sound system
   sndrst (cmd C:\PROGRA~2\VB\VOICEM~1\VOICEM~4.EXE -R)
