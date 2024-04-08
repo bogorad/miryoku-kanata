@@ -52,7 +52,7 @@ U_BASE:
 
 U_NAV
 2.1. Changed direction keys: h/j/k/l with Colemak is just stupid.
-2.2. Added [{()}] for VIM-style navigation
+.2. Added [{()}] for VIM-style navigation
 2.3. Moved CAPS and replaced it with CAPS-WORD
 2.4. n/a
 2.5. Threw away copy/cut/paste, used chords instead.
@@ -110,10 +110,8 @@ so we can copy+paste it and customize
 (defvar
   tap-timeout   200
   hold-timeout  300
-  hold-timeout-long 400
   tt $tap-timeout
   ht $hold-timeout
-  hl $hold-timeout-long
 )
 
 ;; we'll process only these keys
@@ -148,12 +146,14 @@ so it can be serialized via (macro fake real whatever)
   ;;
   ;; permanent layer-switching
   fake-lsw-bas (layer-switch U_BASE)
+  fake-lsw-baf (layer-switch U_BASE_FAST)
   fake-lsw-fun (layer-switch U_FUN)
   fake-lsw-nav (layer-switch U_NAV)
   fake-lsw-num (layer-switch U_NUM)
   fake-lsw-med (layer-switch U_MEDIA)
   fake-lsw-mou (layer-switch U_MOUSE)
   fake-lsw-qwe (layer-switch U_QWERTY)
+  fake-lsw-qwf (layer-switch U_QWERTY_FAST)
   fake-lsw-tap (layer-switch U_TAP)
   fake-lsw-sym (layer-switch U_SYM)
   fake-lsw-syr (layer-switch U_SYM_RUS)
@@ -185,12 +185,14 @@ so it can be serialized via (macro fake real whatever)
 (defalias
   ;; shorter names for layer switches
   lsw-bas (on-press tap-virtualkey fake-lsw-bas)
+  lsw-baf (on-press tap-virtualkey fake-lsw-baf)
   lsw-fun (on-press tap-virtualkey fake-lsw-fun)
   lsw-nav (on-press tap-virtualkey fake-lsw-nav)
   lsw-num (on-press tap-virtualkey fake-lsw-num)
   lsw-med (on-press tap-virtualkey fake-lsw-med)
   lsw-mou (on-press tap-virtualkey fake-lsw-mou)
   lsw-qwe (on-press tap-virtualkey fake-lsw-qwe)
+  lsw-qwf (on-press tap-virtualkey fake-lsw-qwf)
   lsw-tap (on-press tap-virtualkey fake-lsw-tap)
   lsw-sym (on-press tap-virtualkey fake-lsw-sym)
   lsw-syr (on-press tap-virtualkey fake-lsw-sym)
@@ -269,17 +271,24 @@ are mapped to letters
 ;;
   at     (unicode @)
   hash   (unicode #)
+  rusnum (unicode Γäû)
+;;
   dollar (unicode $)
-  euro   (unicode €)
+  euro   (unicode Γé¼)
+  pound  (unicode ┬ú)
+  cent   (unicode ┬ó)
+;;
   percen (unicode %)
   caret  (unicode ^)
   ampers (unicode &)
+  tradem (unicode Γäó)
 ;;
   apo    (unicode ')
 ;;
   gt     (unicode >)
   lt     (unicode <)
   ;;
+  email   (macro b o g o r a d @at g m a i l . c o m)
 )
 
 (defalias
@@ -302,10 +311,7 @@ are mapped to letters
 
   ;; symbols to be handied by OS
   ;; this references Fake-keys defined above
-  s-eml (on-press tap-virtualkey fake-hyper-a)
-  s-btc (on-press tap-virtualkey fake-hyper-b)
-  s-eur (on-press tap-virtualkey fake-hyper-c)
-  s-tm  (on-press tap-virtualkey fake-hyper-d)
+  s-btc   (on-press tap-virtualkey fake-hyper-b)
   s-hyE (on-press tap-virtualkey fake-hyper-e)
   s-hyF (on-press tap-virtualkey fake-hyper-f)
   s-hyG (on-press tap-virtualkey fake-hyper-g)
@@ -318,18 +324,10 @@ are mapped to letters
 ;;  capw    (tap-hold-press $tt $ht (caps-word 3000) caps)
   capw  (caps-word 3000)
   ;;
-  ;; The following section takes care of HRM+rolls.
-  ;; smart-t: s+t
-  ;; "st" or normal "t"
-  smart-t (switch
-    ((input-history real d 2)) (macro (unmod s) (unmod t)) break
-    () (tap-hold-press $tt $ht t (one-shot-press 2000 lsft)) break
-  )
-  ;; smart-n: e+n
-  ;; "en" or normal "n"
-  smart-n (switch
-    ((input-history real k 2)) (macro (unmod e) (unmod n)) break
-    () (tap-hold-press $tt $ht n (one-shot-press 2000 lsft)) break
+  ;;
+  bfast (multi
+    @lsw-baf
+    (on-idle 35 tap-virtualkey fake-lsw-bas)
   )
 )
 
@@ -346,23 +344,23 @@ are mapped to letters
   ;;
   ;; all keys are mapped so that it's easy to create new chords
   ;; left half
-  (kq            ) q ;; (tap-hold-press-timeout $tt $hl q XX   (macro C-q))
-  (   kw         ) w ;; (tap-hold-press-timeout $tt $hl w XX   (macro C-w))
-  (      kf      ) f ;; (tap-hold-press-timeout $tt $hl f XX   (macro C-f))
-  (         kp   ) p ;; (tap-hold-press-timeout $tt $hl p XX   (macro C-p))
-  (            kb) b ;; (tap-hold-press-timeout $tt $hl b XX   (macro C-b))
+  (kq            ) (multi q @bfast)
+  (   kw         ) (multi w @bfast)
+  (      kf      ) (multi f @bfast)
+  (         kp   ) (multi p @bfast)
+  (            kb) (multi b @bfast)
   ;;
-  (ka            ) (tap-hold-press-timeout $tt $hl a lmet lmet) ;; (macro C-a))
-  (   kr         ) (tap-hold-press-timeout $tt $hl r lalt lalt) ;; (macro C-r))
-  (      ks      ) (tap-hold-press-timeout $tt $hl s lctl lctl) ;; (macro C-s))
-  (         kt   ) (tap-hold-press $tt $ht t (one-shot-press 2000 lsft))
-  (            kg) g ;; (tap-hold-press-timeout $tt $hl g XX   (macro C-g))
+  (ka            ) (multi (tap-hold $tt $ht a lmet) @bfast)
+  (   kr         ) (multi (tap-hold $tt $ht r lalt) @bfast)
+  (      ks      ) (multi (tap-hold $tt $ht s lctl) @bfast)
+  (         kt   ) (multi (tap-hold $tt $ht t lsft) @bfast)
+  (            kg) (multi g @bfast)
   ;;
-  (kz            ) z ;; (tap-hold-press-timeout $tt $hl z XX   (macro C-z))
-  (   kx         ) x ;; (tap-hold-press-timeout $tt $hl x XX   (macro C-x))
-  (      kc      ) c ;; (tap-hold-press-timeout $tt $hl c XX   (macro C-c))
-  (         kd   ) d ;; (tap-hold-press-timeout $tt $hl d XX   (macro C-d))
-  (            kv) v ;; (tap-hold-press-timeout $tt $hl v XX   (macro C-v))
+  (kz            ) (multi z @bfast)
+  (   kx         ) (multi x @bfast)
+  (      kc      ) (multi c @bfast)
+  (         kd   ) (multi d @bfast)
+  (            kv) (multi v @bfast)
   ;; Undo/Cut/Copy/Paste
   (kz kx         ) @undo
   (   kx kc      ) @cut
@@ -374,23 +372,23 @@ are mapped to letters
   ;; w+f = vim save
   (kw kf) (macro esc @colon w ret)
   ;; right half
-  (kj            ) j ;; (tap-hold-press-timeout $tt $hl j XX   (macro C-j))
-  (   kl         ) l ;; (tap-hold-press-timeout $tt $hl l XX   (macro C-l))
-  (      ku      ) u ;; (tap-hold-press-timeout $tt $hl u XX   (macro C-u))
-  (         ky   ) y ;; (tap-hold-press-timeout $tt $hl y XX   (macro C-y))
-  (            k') apo
+  (kj            ) (multi j @bfast)
+  (   kl         ) (multi l @bfast)
+  (      ku      ) (multi u @bfast)
+  (         ky   ) (multi y @bfast)
+  (            k') (multi ' @bfast)
   ;;
-  (km            ) m ;; (tap-hold-press-timeout $tt $hl m XX   (macro C-m))
-  (   kn         ) (tap-hold-press $tt $ht n (one-shot-press 2000 lsft))
-  (      ke      ) (tap-hold-press-timeout $tt $ht e rctl rctl) ;; (macro C-e))
-  (         ki   ) (tap-hold-press-timeout $tt $ht i ralt ralt) ;; (macro C-i))
-  (            ko) (tap-hold-press-timeout $tt $ht o rmet rmet) ;; (macro C-o))
+  (km            ) (multi m @bfast)
+  (   kn         ) (multi (tap-hold $tt $ht n lsft) @bfast)
+  (      ke      ) (multi (tap-hold $tt $ht e lctl) @bfast)
+  (         ki   ) (multi (tap-hold $tt $ht i lalt) @bfast)
+  (            ko) (multi (tap-hold $tt $ht o lmet) @bfast)
   ;;
-  (kk            ) k ;; (tap-hold-press-timeout $tt $hl k XX   (macro C-k))
-  (   kh         ) h ;; (tap-hold-press-timeout $tt $hl h XX   (macro C-h))
-  (      k,      ) comm
-  (         k.   ) .
-  (            k/) /
+  (kk            ) (multi k @bfast)
+  (   kh         ) (multi h @bfast)
+  (      k,      ) (multi , @bfast)
+  (         k.   ) (multi . @bfast)
+  (            k/) (multi / @bfast)
   ;;
   ;; u + y = enter, since the "real" enter is disabled
   (ku ky) ret
@@ -405,28 +403,28 @@ are mapped to letters
   ;; here I'm using fork to ignore keys if any of the HRMs
   ;; of the same side are actively depressed
   ;; e.g., q/w/f/p/b are ignored if any ot a/r/s/t are held
-  bas-q   (fork (chord bas-chords kq) XX  (lalt lctl lmet))
-  bas-w   (fork (chord bas-chords kw) XX  (lalt lctl lmet))
-  bas-f   (fork (chord bas-chords kf) XX  (lalt lctl lmet))
-  bas-p   (fork (chord bas-chords kp) XX  (lalt lctl lmet))
-  bas-b   (fork (chord bas-chords kb) XX  (lalt lctl lmet))
+  bas-q   (chord bas-chords kq)
+  bas-w   (chord bas-chords kw)
+  bas-f   (chord bas-chords kf)
+  bas-p   (chord bas-chords kp)
+  bas-b   (chord bas-chords kb)
   ;;second row
   ;; prevent rolls from affecting neighbouring keys (as defined in defsrc)
   ;; so a never ignored, r ignored if a is held, s ignored if r held, g if s held
   ;; additionally send no-key (f18) if r held+released
 ;;  bas-a         (tap-hold-press $tt $ht   (chord bas-chords ka) lmet)
-  bas-a         (chord bas-chords ka)
-  bas-r   (fork (chord bas-chords kr) f18 (lmet))
-  bas-s   (fork (chord bas-chords ks) XX  (lalt))
-  bas-t   (fork (chord bas-chords kt) @smart-t (lctl))
-  bas-g   (fork (chord bas-chords kg) XX  (lalt lctl lmet))
+  bas-a   (chord bas-chords ka)
+  bas-r   (chord bas-chords kr)
+  bas-s   (chord bas-chords ks)
+  bas-t   (chord bas-chords kt)
+  bas-g   (chord bas-chords kg)
   ;; third row
   ;; keys z/x/c/d/v for undo/cut/copy/paste
-  bas-z   (fork (chord bas-chords kz) XX  (lalt lctl lmet))
-  bas-x   (fork (chord bas-chords kx) XX  (lalt lctl lmet))
-  bas-c   (fork (chord bas-chords kc) XX  (lalt lctl lmet))
-  bas-d   (fork (chord bas-chords kd) XX  (lalt lctl lmet))
-  bas-v   (fork (chord bas-chords kv) XX  (lalt lctl lmet))
+  bas-z   (chord bas-chords kz)
+  bas-x   (chord bas-chords kx)
+  bas-c   (chord bas-chords kc)
+  bas-d   (chord bas-chords kd)
+  bas-v   (chord bas-chords kv)
   ;; thumbs
   ;; bas-bks (chord bas-chords k-bks)
 ;;  bas-bks @bks-med
@@ -437,23 +435,23 @@ are mapped to letters
   bas-end @tab-mou
   ;; right half
   ;; first row
-  bas-j   (fork (chord bas-chords kj) XX  (ralt rctl rmet))
-  bas-l   (fork (chord bas-chords kl) XX  (ralt rctl rmet))
-  bas-u   (fork (chord bas-chords ku) XX  (ralt rctl rmet))
-  bas-y   (fork (chord bas-chords ky) XX  (ralt rctl rmet))
-  bas-'   (fork (chord bas-chords k') XX  (ralt rctl rmet))
+  bas-j   (chord bas-chords kj)
+  bas-l   (chord bas-chords kl)
+  bas-u   (chord bas-chords ku)
+  bas-y   (chord bas-chords ky)
+  bas-'   (chord bas-chords k')
   ;; second row
-  bas-m   (fork (chord bas-chords km) XX  (ralt rctl rmet))
-  bas-n   (fork (chord bas-chords kn) @smart-n (rctl))
-  bas-e   (fork (chord bas-chords ke) XX  (ralt))
-  bas-i   (fork (chord bas-chords ki) f18 (rmet))
-  bas-o         (chord bas-chords ko)
+  bas-m   (chord bas-chords km)
+  bas-n   (chord bas-chords kn)
+  bas-e   (chord bas-chords ke)
+  bas-i   (chord bas-chords ki)
+  bas-o   (chord bas-chords ko)
   ;; third row
-  bas-k   (fork (chord bas-chords kk) XX  (ralt rctl rmet))
-  bas-h   (fork (chord bas-chords kh) XX  (ralt rctl rmet))
-  bas-,   (fork (chord bas-chords k,) XX  (ralt rctl rmet))
-  bas-.   (fork (chord bas-chords k.) XX  (ralt rctl rmet))
-  bas-/   (fork (chord bas-chords k/) XX  (ralt rctl rmet))
+  bas-k   (chord bas-chords kk)
+  bas-h   (chord bas-chords kh)
+  bas-,   (chord bas-chords k,)
+  bas-.   (chord bas-chords k.)
+  bas-/   (chord bas-chords k/)
   ;; thumbs
   bas-pgd @ret-sym
   bas-ret @bks-num
@@ -498,153 +496,130 @@ are mapped to letters
   @lwh-ctl
 )
 
-;; we use QWERTY layer with home-row modifiers and button+right alt
-;; to allow proper Cyrillic mapping
-;;
-;; here are some hacks:
-;; ъ is double-tapped ь
-;; ё is double-tapped е
-;; э is triple-tapped е
-(defalias
-  ;; cyrillic е/э/ё
-  cyr-eee  (tap-dance $tt (i apo grv))
-  ;; cyrillic ь/ъ
-  cyr-soft (tap-dance $tt (m ]))
-  ;; cyrillic   ф/х
-  cyr-fh   (tap-dance $tt (o [))
-  ;; for {[()]} -- TBD
-  ;;
-  ;; The following section takes care of HRM+rolls.
-  ;; smart-f
-  ;; "df" or normal "f"
-  ;; "sf" or normal "f"
-  smart-f (switch
-    ((input-history real d 2)) (macro (unmod d) (unmod f)) break
-    ((input-history real s 2)) (macro (unmod s) (unmod f)) break
-    () (tap-hold-press $tt $ht f (one-shot-press 2000 lsft)) break
-  )
-  ;; smart-j
-  ;; "kj" or normal "j"
-  ;; "lj" or normal "j"
-  smart-j (switch
-    ((input-history real k 2)) (macro (unmod k) (unmod j)) break
-    ((input-history real l 2)) (macro (unmod l) (unmod j)) break
-    () (tap-hold-press $tt $ht j (one-shot-press 2000 lsft)) break
-  )
-  ;; smart-m
-  smart-m (switch
-    ((input-history real k 2)) (macro (unmod k) (unmod m)) break
-    () (tap-hold-press $tt $ht m (one-shot-press 2000 lsft)) break
-  )
-  ;; smart-v
-  smart-v (switch
-    ((input-history real d 2)) (macro (unmod d) (unmod v)) break
-    () (tap-hold-press $tt $ht v (one-shot-press 2000 lsft)) break
-  )
+;; base layer for FAST typing
+(deflayer U_BASE_FAST
+  ;; left
+  q       w       f       p       b
+  a       r       s       t       g
+  z       x       c       d       v
+  @bas-bks        @bas-del        @bas-end
+  ;; right
+  j       l       u       y       '
+  m       n       e       i       o
+  k       h       ,       .       /
+  @bas-pgd        @bas-ret        @bas-spc
+  ;; extra keys - not actually used, needed to intercept events
+  @lwh-ctl
+)
 
+;; now deal with Cyrillic
+(defalias qfast
+  (multi
+    @lsw-qwf
+    (on-idle 35 tap-virtualkey fake-lsw-qwe)
+  )
 )
 
 ;; U_QWERTY:
 (defchords qwe-chords 80
   ;; f + j = caps-word (two shifts)
-;;  (qt qy) @capw
+  (qt qy) @capw
   ;;
   (qz q/) (one-shot 1000 (layer-while-held U_BUTTON))
   ;;
   (qv qm) @eng
   ;; left half
-  (qq            ) q
-  (   qw         ) w
-  (      qe      ) e
-  (         qr   ) r
-  (            qt) t
+  (qq            ) (multi q @qfast)
+  (   qw         ) (multi w @qfast)
+  (      qe      ) (multi e @qfast)
+  (         qr   ) (multi r @qfast)
+  (            qt) (multi t @qfast)
   ;;
-  (qa            ) a
-  (   qs         ) s
-  (      qd      ) d
-  (         qf   ) f
-  (            qg) g
+  (qa            ) (multi (tap-hold $tt $ht a lmet) @qfast)
+  (   qs         ) (multi (tap-hold $tt $ht s lalt) @qfast)
+  (      qd      ) (multi (tap-hold $tt $ht d lctl) @qfast)
+  (         qf   ) (multi (tap-hold $tt $ht f lsft) @qfast)
+  (            qg) (multi g @qfast)
   ;;
-  (qz            ) z
-  (   qx         ) x
-  (      qc      ) c
-  (         qv   ) v
-  (            qb) b
+  (qz            ) (multi z @qfast)
+  (   qx         ) (multi x @qfast)
+  (      qc      ) (multi c @qfast)
+  (         qv   ) (multi v @qfast)
+  (            qb) (multi b @qfast)
   ;; Undo/Cut/Copy/Paste
   (qz qx         ) @undo
   (   qx qc      ) @cut
   (      qc qv   ) @copy
   (         qv qb) @paste
   ;; right half
-  (qy            ) y
-  (   qu         ) u
-  (      qi      ) @cyr-eee
-  (         qo   ) @cyr-fh
-  (            qp) p
+  (qy            ) (multi y @qfast)
+  (   qu         ) (multi u @qfast)
+  (      qi      ) (multi i @qfast)
+  (         qo   ) (multi o @qfast)
+  (            qp) (multi p @qfast)
   ;;
-  (qh            ) h
-  (   qj         ) j
-  (      qk      ) k
-  (         ql   ) l
-  (            q;) ;
+  (qh            ) (multi h @qfast)
+  (   qj         ) (multi (tap-hold $tt $ht j lsft) @qfast)
+  (      qk      ) (multi (tap-hold $tt $ht k lctl) @qfast)
+  (         ql   ) (multi (tap-hold $tt $ht l lalt) @qfast)
+  (            q;) (multi (tap-hold $tt $ht ; lmet) @qfast)
   ;;
-  (qn            ) n
-  (   qm         ) @cyr-soft
-  (      q,      ) comm
-  (         q.   ) .
-  (            q/) @slash
+  (qn            ) (multi n @qfast)
+  (   qm         ) (multi m @qfast)
+  (      q,      ) (multi , @qfast)
+  (         q.   ) (multi . @qfast)
+  (            q/) (multi @slash @qfast)
   ;;
-;;  (qu qi) S-2
   (qi qo) ret
   (qm q,) @comma
   (q, q.) @dot
-  (q. q/) @q-mark
+  (q. q/) S-7
 )
 (defalias
   ;; left half
   ;; only output if none of the opposing-hand HRMs are depressed
   ;; first row
 ;;  qwe-q   (chord qwe-chords qq)
-  qwe-q   (fork (chord qwe-chords qq) XX (lalt lctl lmet))
-  qwe-w   (fork (chord qwe-chords qw) XX (lalt lctl lmet))
-  qwe-e   (fork (chord qwe-chords qe) XX (lalt lctl lmet))
-  qwe-r   (fork (chord qwe-chords qr) XX (lalt lctl lmet))
-  qwe-t   (fork (chord qwe-chords qt) XX (lalt lctl lmet))
+  qwe-q   (chord qwe-chords qq)
+  qwe-w   (chord qwe-chords qw)
+  qwe-e   (chord qwe-chords qe)
+  qwe-r   (chord qwe-chords qr)
+  qwe-t   (chord qwe-chords qt)
   ;; second row
-  qwe-a         (tap-hold-press $tt $ht (chord qwe-chords qa) lmet)
-  qwe-s   (fork (tap-hold-press $tt $ht (chord qwe-chords qs) lalt) f18 (lmet))
-  qwe-d   (fork (tap-hold-press $tt $ht (chord qwe-chords qd) lctl) XX  (lctl))
-  qwe-f   (fork (tap-hold-press $tt $ht (chord qwe-chords qf) lsft) @smart-f (lctl))
-  qwe-g   (fork (chord qwe-chords qg) XX (lalt rctl lmet))
+  qwe-a   (chord qwe-chords qa)
+  qwe-s   (chord qwe-chords qs)
+  qwe-d   (chord qwe-chords qd)
+  qwe-f   (chord qwe-chords qf)
+  qwe-g   (chord qwe-chords qg)
   ;; third row
-  qwe-z   (fork (chord qwe-chords qz) XX (lalt lctl lmet))
-  qwe-x   (fork (chord qwe-chords qx) XX (lalt lctl lmet))
-  qwe-c   (fork (chord qwe-chords qc) XX (lalt lctl lmet))
-  qwe-v   (fork (chord qwe-chords qv) @smart-v (lalt lctl lmet))
-  qwe-b   (fork (chord qwe-chords qb) XX (lalt lctl lmet))
+  qwe-z   (chord qwe-chords qz)
+  qwe-x   (chord qwe-chords qx)
+  qwe-c   (chord qwe-chords qc)
+  qwe-v   (chord qwe-chords qv)
+  qwe-b   (chord qwe-chords qb)
   ;; thumbs
   qwe-bks @esc-med
   qwe-del @spc-nav
   qwe-end @tab-mou
   ;; right half(chord qwe-chords qz)
   ;; first row
-  qwe-y   (fork (chord qwe-chords qy) XX (ralt rctl rmet))
-  qwe-u   (fork (chord qwe-chords qu) XX (ralt rctl rmet))
-  qwe-i   (fork (chord qwe-chords qi) XX (ralt rctl rmet))
-  qwe-o   (fork (chord qwe-chords qo) XX (ralt rctl rmet))
-  qwe-p   (fork (chord qwe-chords qp) XX (ralt rctl rmet))
+  qwe-y   (chord qwe-chords qy)
+  qwe-u   (chord qwe-chords qu)
+  qwe-i   (tap-dance $tt ((chord qwe-chords qi) apo grv)) ;; cyrillic ╨╡/╤ì/╤æ
+  qwe-o   (tap-dance $tt ((chord qwe-chords qo) [)) ;; cyrillic   ╤ä/╤à
+  qwe-p   (chord qwe-chords qp)
   ;; second row
-  qwe-h   (fork (chord qwe-chords qh) XX (ralt rctl rmet))
-  qwe-j   (fork (tap-hold-press $tt $ht (chord qwe-chords qj) rsft) @smart-j (rctl ralt))
-  qwe-k   (fork (tap-hold-press $tt $ht (chord qwe-chords qk) rctl) XX  (ralt))
-  qwe-l   (fork (tap-hold-press $tt $ht (chord qwe-chords ql) ralt) f18 (rmet))
-  qwe-;         (tap-hold-press $tt $ht (chord qwe-chords q;) rmet)
+  qwe-h   (chord qwe-chords qh)
+  qwe-j   (chord qwe-chords qj)
+  qwe-k   (chord qwe-chords qk)
+  qwe-l   (chord qwe-chords ql)
+  qwe-;   (chord qwe-chords q;)
   ;; third row
-  qwe-n   (fork (chord qwe-chords qn) XX (ralt rctl rmet))
-  qwe-m   (fork (chord qwe-chords qm) @smart-m (ralt rctl rmet))
-  qwe-,   (fork (chord qwe-chords q,) XX (ralt rctl rmet))
-  qwe-.   (fork (chord qwe-chords q.) XX (ralt rctl rmet))
-  qwe-/   (fork (chord qwe-chords q/) XX (ralt rctl rmet))
+  qwe-n   (chord qwe-chords qn)
+  qwe-m   (tap-dance $tt ((chord qwe-chords qm) ])) ;; cyrillic ╤î/╤è
+  qwe-,   (chord qwe-chords q,)
+  qwe-.   (chord qwe-chords q.)
+  qwe-/   (chord qwe-chords q/)
   ;; thumbs
   qwe-pgd @ret-syr
   qwe-ret @bks-num
@@ -666,24 +641,39 @@ are mapped to letters
   @lwh-ctl
 )
 
+(deflayer U_QWERTY_FAST
+  ;; left
+  q  w  e  r  t
+  a  s  d  f  g
+  z  x  c  v  b
+  @qwe-bks        @qwe-del        @qwe-end
+  ;; right
+  y  u  i  o  p
+  h  j  k  l  ;
+  n  m  ,  .  /
+  @qwe-pgd        @qwe-ret        @qwe-spc
+  ;; extra keys - not actually used, needed to intercept events
+  @lwh-ctl
+)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; experimental layer for Russian
 ;; based on Leonov's work here: https://habr.com/ru/articles/717912/
 (deflayer U_RUS_LEO
   ;; left
-;;цч к  л  б  й
+;;╤å╤ç ╨║  ╨╗  ╨▒  ╨╣
   w  r  k  ,  q
-;;жз в  н  т  д
+;;╨╢╨╖ ╨▓  ╨╜  ╤é  ╨┤
   ;  d  y  n  l
-;;х  п  р  м  г
+;;╤à  ╨┐  ╤Ç  ╨╝  ╨│
   [  g  h  v  u
   bks        del        end
   ;; right
-;;щх ы  я  э  ф
+;;╤ë╤à ╤ï  ╤Å  ╤ì  ╤ä
   o  s  z  '  z
-;;ьъ а  о  е  с
+;;╤î╤è ╨░  ╨╛  ╨╡  ╤ü
   m  j  j  t  c
-;;шё и  у  ю  /
+;;╤ê╤æ ╨╕  ╤â  ╤Ä  /
   i  b  ,  .  /
   @qwe-pgd        @qwe-ret        @qwe-spc
   ;; extra keys - not actually used, needed to intercept events
@@ -721,7 +711,7 @@ are mapped to letters
   @lwh-ctl
 )
 
- ;; this is no longer just shifted S_NUM
+ ;; !!! this is no longer just shifted S_NUM !!!
 (deflayer U_SYM
   ;; left
   S-1     S-2     S-3     S-4     S-5
@@ -793,8 +783,8 @@ are mapped to letters
 
 (deflayer U_BUTTON
   ;; left
-  @s-eml  @s-btc  @s-eur  @s-tm   @s-hyE
-  met     alt     ctl     sft     @s-hyF
+  @email  @s-btc  @euro   @pound  @cent
+  @tradem alt     ctl     sft     @s-hyF
   @s-hyG  @s-hyH  @s-hyI  @s-hyJ  @s-hyK
   mmtp            mltp            mrtp
   ;; right
@@ -813,15 +803,15 @@ are mapped to letters
   mwl (mwheel-left 50 120)
   mwr (mwheel-right 50 120)
 
-  ms↑ (movemouse-up 1 1)
-  ms← (movemouse-left 1 1)
-  ms↓ (movemouse-down 1 1)
-  ms→ (movemouse-right 1 1)
+  msΓåæ (movemouse-up 1 1)
+  msΓåÉ (movemouse-left 1 1)
+  msΓåô (movemouse-down 1 1)
+  msΓåÆ (movemouse-right 1 1)
 
-  ma↑ (movemouse-accel-up 1 1000 1 5)
-  ma← (movemouse-accel-left 1 1000 1 5)
-  ma↓ (movemouse-accel-down 1 1000 1 5)
-  ma→ (movemouse-accel-right 1 1000 1 5)
+  maΓåæ (movemouse-accel-up 1 1000 1 5)
+  maΓåÉ (movemouse-accel-left 1 1000 1 5)
+  maΓåô (movemouse-accel-down 1 1000 1 5)
+  maΓåÆ (movemouse-accel-right 1 1000 1 5)
 )
 
 (deflayer U_MOUSE
@@ -832,8 +822,8 @@ are mapped to letters
   ;; thumbs
   XX              XX              XX
   ;; right half
-  @eng    @mwl    @ma↑    @mwr    @mwu
-  @rus    @ma←    @ma↓    @ma→    @mwd
+  @eng    @mwl    @maΓåæ    @mwr    @mwu
+  @rus    @maΓåÉ    @maΓåô    @maΓåÆ    @mwd
   XX      XX      XX      XX      XX
   ;; thumbs - r/l/m mouse tapt (as opposed to clicks)
   mrtp            mltp            mmtp
