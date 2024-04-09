@@ -52,13 +52,13 @@ U_BASE:
 
 U_NAV
 2.1. Changed direction keys: h/j/k/l with Colemak is just stupid.
-.2. Added [{()}] for VIM-style navigation
-2.3. Moved CAPS and replaced it with CAPS-WORD
+2.2. Added [{()}] for VIM-style navigation
+2.3. Moved CAPS, I use CAPS-WORD anyway
 2.4. n/a
 2.5. Threw away copy/cut/paste, used chords instead.
 2.6. Moved home/end, pgup/pgdn.
 2.7. n/a.
-2.8. Not on this layer, but related to navigation: modified tab always resets the language to ENG.
+2.8. Not on this layer, but related to navigation: modified tab/esc always resets the language to ENG
 
 U_MOUSE
 3.1. Changed direction keys to match U_NAV.
@@ -216,14 +216,16 @@ so it can be serialized via (macro fake real whatever)
   lwh-syr   (layer-while-held U_SYM_RUS)
   lwh-ctl   (layer-while-held U_CTL)
   ;;
-  ;; swetch to English and then send tab
+  ;; switch to English and then send tab/escape
   eng-tab   (macro @eng 100 tab)
+  eng-esc   (macro @eng 100 esc)
   ;; do eng-tab if any of right-side HRMs are active, tab otherwise
-  smart-tab (fork tab @eng-tab (rsft lalt rctl rmet))
+  smart-tab (fork tab @eng-tab (ralt rctl rmet))
+  smart-esc (fork esc @eng-esc (ralt rctl rmet))
   ;;
   ;; tap-hold actions for thumb keys
   ;; left (left-2-right order)
-  esc-med   (tap-hold-press $tt $ht esc @lwh-med)
+  esc-med   (tap-hold-press $tt $ht @smart-esc @lwh-med)
   spc-nav   (tap-hold-press $tt $ht spc @lwh-nav)
   tab-mou   (tap-hold-press $tt $ht @smart-tab @lwh-mou)
   ;; right (left-2-right order)
@@ -271,17 +273,17 @@ are mapped to letters
 ;;
   at     (unicode @)
   hash   (unicode #)
-  rusnum (unicode Γäû)
+  rusnum (unicode №)
 ;;
   dollar (unicode $)
-  euro   (unicode Γé¼)
-  pound  (unicode ┬ú)
-  cent   (unicode ┬ó)
+  euro   (unicode €)
+  pound  (unicode £)
+  cent   (unicode ¢)
 ;;
   percen (unicode %)
   caret  (unicode ^)
   ampers (unicode &)
-  tradem (unicode Γäó)
+  tradem (unicode ™)
 ;;
   apo    (unicode ')
 ;;
@@ -311,7 +313,7 @@ are mapped to letters
 
   ;; symbols to be handied by OS
   ;; this references Fake-keys defined above
-  s-btc   (on-press tap-virtualkey fake-hyper-b)
+  s-btc (on-press tap-virtualkey fake-hyper-b)
   s-hyE (on-press tap-virtualkey fake-hyper-e)
   s-hyF (on-press tap-virtualkey fake-hyper-f)
   s-hyG (on-press tap-virtualkey fake-hyper-g)
@@ -321,10 +323,9 @@ are mapped to letters
   s-hyK (on-press tap-virtualkey fake-hyper-k)
 
   ;; caps-word(for 3 sec) or caps
-;;  capw    (tap-hold-press $tt $ht (caps-word 3000) caps)
   capw  (caps-word 3000)
-  ;;
-  ;;
+
+  ;; layer switch for fast typing
   bfast (multi
     @lsw-baf
     (on-idle 35 tap-virtualkey fake-lsw-bas)
@@ -379,10 +380,10 @@ are mapped to letters
   (            k') (multi ' @bfast)
   ;;
   (km            ) (multi m @bfast)
-  (   kn         ) (multi (tap-hold $tt $ht n lsft) @bfast)
-  (      ke      ) (multi (tap-hold $tt $ht e lctl) @bfast)
-  (         ki   ) (multi (tap-hold $tt $ht i lalt) @bfast)
-  (            ko) (multi (tap-hold $tt $ht o lmet) @bfast)
+  (   kn         ) (multi (tap-hold $tt $ht n rsft) @bfast)
+  (      ke      ) (multi (tap-hold $tt $ht e rctl) @bfast)
+  (         ki   ) (multi (tap-hold $tt $ht i ralt) @bfast)
+  (            ko) (multi (tap-hold $tt $ht o rmet) @bfast)
   ;;
   (kk            ) (multi k @bfast)
   (   kh         ) (multi h @bfast)
@@ -400,26 +401,18 @@ are mapped to letters
 (defalias
   ;; left half
   ;; first row
-  ;; here I'm using fork to ignore keys if any of the HRMs
-  ;; of the same side are actively depressed
-  ;; e.g., q/w/f/p/b are ignored if any ot a/r/s/t are held
   bas-q   (chord bas-chords kq)
   bas-w   (chord bas-chords kw)
   bas-f   (chord bas-chords kf)
   bas-p   (chord bas-chords kp)
   bas-b   (chord bas-chords kb)
   ;;second row
-  ;; prevent rolls from affecting neighbouring keys (as defined in defsrc)
-  ;; so a never ignored, r ignored if a is held, s ignored if r held, g if s held
-  ;; additionally send no-key (f18) if r held+released
-;;  bas-a         (tap-hold-press $tt $ht   (chord bas-chords ka) lmet)
   bas-a   (chord bas-chords ka)
   bas-r   (chord bas-chords kr)
   bas-s   (chord bas-chords ks)
   bas-t   (chord bas-chords kt)
   bas-g   (chord bas-chords kg)
   ;; third row
-  ;; keys z/x/c/d/v for undo/cut/copy/paste
   bas-z   (chord bas-chords kz)
   bas-x   (chord bas-chords kx)
   bas-c   (chord bas-chords kc)
@@ -427,9 +420,6 @@ are mapped to letters
   bas-v   (chord bas-chords kv)
   ;; thumbs
   ;; bas-bks (chord bas-chords k-bks)
-;;  bas-bks @bks-med
-;;  bas-esc @esc-nav
-;;  bas-tab @tab-mou
   bas-bks @esc-med
   bas-del @spc-nav
   bas-end @tab-mou
@@ -456,7 +446,6 @@ are mapped to letters
   bas-pgd @ret-sym
   bas-ret @bks-num
   bas-spc @del-fun
-;;  bas-spc @e-fun
 )
 
 #|
@@ -577,9 +566,7 @@ are mapped to letters
 )
 (defalias
   ;; left half
-  ;; only output if none of the opposing-hand HRMs are depressed
   ;; first row
-;;  qwe-q   (chord qwe-chords qq)
   qwe-q   (chord qwe-chords qq)
   qwe-w   (chord qwe-chords qw)
   qwe-e   (chord qwe-chords qe)
@@ -605,8 +592,8 @@ are mapped to letters
   ;; first row
   qwe-y   (chord qwe-chords qy)
   qwe-u   (chord qwe-chords qu)
-  qwe-i   (tap-dance $tt ((chord qwe-chords qi) apo grv)) ;; cyrillic ╨╡/╤ì/╤æ
-  qwe-o   (tap-dance $tt ((chord qwe-chords qo) [)) ;; cyrillic   ╤ä/╤à
+  qwe-i   (tap-dance $tt ((chord qwe-chords qi) apo grv)) ;; cyrillic е/э/ё
+  qwe-o   (tap-dance $tt ((chord qwe-chords qo) [)) ;; cyrillic   ф/х
   qwe-p   (chord qwe-chords qp)
   ;; second row
   qwe-h   (chord qwe-chords qh)
@@ -616,7 +603,7 @@ are mapped to letters
   qwe-;   (chord qwe-chords q;)
   ;; third row
   qwe-n   (chord qwe-chords qn)
-  qwe-m   (tap-dance $tt ((chord qwe-chords qm) ])) ;; cyrillic ╤î/╤è
+  qwe-m   (tap-dance $tt ((chord qwe-chords qm) ])) ;; cyrillic ь/ъ
   qwe-,   (chord qwe-chords q,)
   qwe-.   (chord qwe-chords q.)
   qwe-/   (chord qwe-chords q/)
@@ -661,19 +648,19 @@ are mapped to letters
 ;; based on Leonov's work here: https://habr.com/ru/articles/717912/
 (deflayer U_RUS_LEO
   ;; left
-;;╤å╤ç ╨║  ╨╗  ╨▒  ╨╣
+;;цч к  л  б  й
   w  r  k  ,  q
-;;╨╢╨╖ ╨▓  ╨╜  ╤é  ╨┤
+;;жз в  н  т  д
   ;  d  y  n  l
-;;╤à  ╨┐  ╤Ç  ╨╝  ╨│
+;;х  п  р  м  г
   [  g  h  v  u
   bks        del        end
   ;; right
-;;╤ë╤à ╤ï  ╤Å  ╤ì  ╤ä
+;;щх ы  я  э  ф
   o  s  z  '  z
-;;╤î╤è ╨░  ╨╛  ╨╡  ╤ü
+;;ьъ а  о  е  с
   m  j  j  t  c
-;;╤ê╤æ ╨╕  ╤â  ╤Ä  /
+;;шё и  у  ю  /
   i  b  ,  .  /
   @qwe-pgd        @qwe-ret        @qwe-spc
   ;; extra keys - not actually used, needed to intercept events
@@ -759,16 +746,10 @@ are mapped to letters
 
 )
 
-(defalias
-  ;; live config reload
-  nav-q lrld
-  ;; M+C+A key defined here
-;;  nav-d (multi rmet rctl lalt)
-)
 (deflayer U_NAV
   ;; left
   ;; added keys ([{}]) for VIM navigation
-  @nav-q  @n-tap  @n-qwe  @n-bas  @lbrace
+  lrld    @n-tap  @n-qwe  @n-bas  @lbrace
   met     alt     ctl     sft     @lbrack
   XX      XX      left    right   @lparen
   XX              XX              XX
@@ -803,15 +784,15 @@ are mapped to letters
   mwl (mwheel-left 50 120)
   mwr (mwheel-right 50 120)
 
-  msΓåæ (movemouse-up 1 1)
-  msΓåÉ (movemouse-left 1 1)
-  msΓåô (movemouse-down 1 1)
-  msΓåÆ (movemouse-right 1 1)
+  ms↑ (movemouse-up 1 1)
+  ms← (movemouse-left 1 1)
+  ms↓ (movemouse-down 1 1)
+  ms→ (movemouse-right 1 1)
 
-  maΓåæ (movemouse-accel-up 1 1000 1 5)
-  maΓåÉ (movemouse-accel-left 1 1000 1 5)
-  maΓåô (movemouse-accel-down 1 1000 1 5)
-  maΓåÆ (movemouse-accel-right 1 1000 1 5)
+  ma↑ (movemouse-accel-up 1 1000 1 5)
+  ma← (movemouse-accel-left 1 1000 1 5)
+  ma↓ (movemouse-accel-down 1 1000 1 5)
+  ma→ (movemouse-accel-right 1 1000 1 5)
 )
 
 (deflayer U_MOUSE
@@ -822,8 +803,8 @@ are mapped to letters
   ;; thumbs
   XX              XX              XX
   ;; right half
-  @eng    @mwl    @maΓåæ    @mwr    @mwu
-  @rus    @maΓåÉ    @maΓåô    @maΓåÆ    @mwd
+  @eng    @mwl    @ma↑    @mwr    @mwu
+  @rus    @ma←    @ma↓    @ma→    @mwd
   XX      XX      XX      XX      XX
   ;; thumbs - r/l/m mouse tapt (as opposed to clicks)
   mrtp            mltp            mmtp
@@ -841,7 +822,7 @@ are mapped to letters
 ;; OFF when it's released
 (defalias
   miconoff (multi
-    (on-press tap-virtualkey micon)
+    (on-press   tap-virtualkey micon)
     (on-release tap-virtualkey micoff)
   )
   ;; reset sound system
