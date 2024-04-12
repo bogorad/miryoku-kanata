@@ -16,7 +16,7 @@ Reasons for choosing Kanata vs KMonad:
 =========================
 1. KMonad isn't friendly with the mouse.
 2. KMonad can't do chords, and I need them
-3. I like the idea of RUST better than HASKEL :)
+3. I like the idea of RUST better than HASKEL
 
 https://github.com/bogorad/miryoku-kanata/blob/main/kanata.kbd
 
@@ -493,7 +493,7 @@ are mapped to letters
   z       x       c       d       v
   @bas-bks        @bas-del        @bas-end
   ;; right
-  j       l       u       y       '
+  j       l       @bas-u @bas-y  '
   m       n       e       i       o
   k       h       ,       .       /
   @bas-pgd        @bas-ret        @bas-spc
@@ -592,8 +592,8 @@ are mapped to letters
   ;; first row
   qwe-y   (chord qwe-chords qy)
   qwe-u   (chord qwe-chords qu)
-  qwe-i   (tap-dance $tt ((chord qwe-chords qi) apo grv)) ;; cyrillic е/э/ё
-  qwe-o   (tap-dance $tt ((chord qwe-chords qo) [)) ;; cyrillic   ф/х
+  qwe-i   (chord qwe-chords qi)
+  qwe-o   (chord qwe-chords qo)
   qwe-p   (chord qwe-chords qp)
   ;; second row
   qwe-h   (chord qwe-chords qh)
@@ -603,7 +603,7 @@ are mapped to letters
   qwe-;   (chord qwe-chords q;)
   ;; third row
   qwe-n   (chord qwe-chords qn)
-  qwe-m   (tap-dance $tt ((chord qwe-chords qm) ])) ;; cyrillic ь/ъ
+  qwe-m   (chord qwe-chords qm)
   qwe-,   (chord qwe-chords q,)
   qwe-.   (chord qwe-chords q.)
   qwe-/   (chord qwe-chords q/)
@@ -630,14 +630,14 @@ are mapped to letters
 
 (deflayer U_QWERTY_FAST
   ;; left
-  q  w  e  r  t
-  a  s  d  f  g
-  z  x  c  v  b
+  q       w       e        r      t
+  a       s       d        f      g
+  z       x       c        v      b
   @qwe-bks        @qwe-del        @qwe-end
   ;; right
-  y  u  i  o  p
-  h  j  k  l  ;
-  n  m  ,  .  /
+  y       u       @qwe-i   @qwe-o p
+  h       j       k        l      ;
+  n       m       ,        .      /
   @qwe-pgd        @qwe-ret        @qwe-spc
   ;; extra keys - not actually used, needed to intercept events
   @lwh-ctl
@@ -746,6 +746,11 @@ are mapped to letters
 
 )
 
+(defalias
+  hap-h (cmd c:\bin\hap\hap.exe /hint)
+  hap-t (cmd c:\bin\hap\hap.exe /tray)
+)
+
 (deflayer U_NAV
   ;; left
   ;; added keys ([{}]) for VIM navigation
@@ -756,7 +761,7 @@ are mapped to letters
   ;; right
   @rbrace home    up      end     pgup
   @rbrack left    down    right   pgdn
-  @rparen XX      XX      XX      XX
+  @rparen f23     f24     @hap-t  C-f24
   M-tab           del             ins
   ;; extra keys - not actually used, needed to intercept events
   @lwh-ctl
@@ -805,7 +810,7 @@ are mapped to letters
   ;; right half
   @eng    @mwl    @ma↑    @mwr    @mwu
   @rus    @ma←    @ma↓    @ma→    @mwd
-  XX      XX      XX      XX      XX
+  XX      XX      XX      @hap-t  @hap-h
   ;; thumbs - r/l/m mouse tapt (as opposed to clicks)
   mrtp            mltp            mmtp
   ;; extra keys - not actually used, needed to intercept events
@@ -844,7 +849,7 @@ are mapped to letters
   ;; right
   XX      XX      @volu   XX      XX
   XX      prev    @vold   next    @miconoff
-  XX      XX      XX      XX      XX
+  XX      ]       [       '       grave
   @unmute         pp              @mute
   ;; extra keys - not actually used, needed to intercept events
   @lwh-ctl
