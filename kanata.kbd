@@ -154,6 +154,7 @@ so it can be serialized via (macro fake real whatever)
   fake-lsw-mou (layer-switch U_MOUSE)
   fake-lsw-qwe (layer-switch U_QWERTY)
   fake-lsw-qwf (layer-switch U_QWERTY_FAST)
+  fake-lsw-qwl (layer-switch U_RUS_LEO)
   fake-lsw-tap (layer-switch U_TAP)
   fake-lsw-sym (layer-switch U_SYM)
   fake-lsw-syr (layer-switch U_SYM_RUS)
@@ -180,6 +181,15 @@ so it can be serialized via (macro fake real whatever)
     (on-press     tap-virtualkey fake-lsw-qwe)
     (on-idle 5000 tap-virtualkey fake-lang-switch-eng)
   )
+  fake-lang-switch-rus-notimeout (multi
+    (on-press     tap-virtualkey fake-win-rus)
+    (on-press     tap-virtualkey fake-lsw-qwe)
+  )
+  ;;
+  fake-lang-switch-rus-leo (multi
+    (on-press     tap-virtualkey fake-win-rus)
+    (on-press     tap-virtualkey fake-lsw-qwl)
+  )
 )
 ;; shorter names for fake keys etc
 (defalias
@@ -193,12 +203,15 @@ so it can be serialized via (macro fake real whatever)
   lsw-mou (on-press tap-virtualkey fake-lsw-mou)
   lsw-qwe (on-press tap-virtualkey fake-lsw-qwe)
   lsw-qwf (on-press tap-virtualkey fake-lsw-qwf)
+  lsw-qwl (on-press tap-virtualkey fake-lsw-qwl)
   lsw-tap (on-press tap-virtualkey fake-lsw-tap)
   lsw-sym (on-press tap-virtualkey fake-lsw-sym)
   lsw-syr (on-press tap-virtualkey fake-lsw-sym)
   ;; shorter names for input swithing in Windows
   eng (on-press tap-virtualkey fake-lang-switch-eng)
   rus (on-press tap-virtualkey fake-lang-switch-rus)
+  rus-nt (on-press tap-virtualkey fake-lang-switch-rus-notimeout)
+  rus-leo (on-press tap-virtualkey fake-lang-switch-rus-leo)
 )
 
 ;; aliases - so we can use short labels in layer maps
@@ -215,6 +228,7 @@ so it can be serialized via (macro fake real whatever)
   lwh-sym   (layer-while-held U_SYM)
   lwh-syr   (layer-while-held U_SYM_RUS)
   lwh-ctl   (layer-while-held U_CTL)
+  lwh-qwx   (layer-while-held U_QWERTY_EXTRA)
   ;;
   ;; switch to English and then send tab/escape
   eng-tab   (macro @eng 100 tab)
@@ -226,6 +240,7 @@ so it can be serialized via (macro fake real whatever)
   ;; tap-hold actions for thumb keys
   ;; left (left-2-right order)
   esc-med   (tap-hold-press $tt $ht @smart-esc @lwh-med)
+  esc-qwx   (tap-hold-press $tt $ht @smart-esc @lwh-qwx)
   spc-nav   (tap-hold-press $tt $ht spc @lwh-nav)
   tab-mou   (tap-hold-press $tt $ht @smart-tab @lwh-mou)
   ;; right (left-2-right order)
@@ -336,7 +351,7 @@ are mapped to letters
 (defchords bas-chords 80
   ;; b + j = caps-word (two shifts), then caps
   (kb kj) @capw
-  ;; z+/ = BUTTON layes only for the hext tap
+  ;; z+/ = BUTTON layer only for the hext tap
   (kz k/) (one-shot 1000 (layer-while-held U_BUTTON))
   ;; switch to Russian (it's on a timeout so no need to define the reverse key)
   (kd kh) @rus
@@ -508,14 +523,14 @@ are mapped to letters
     (on-idle 35 tap-virtualkey fake-lsw-qwe)
   )
   ;; Since I decided to use ,./ in both layouts, need to map these keys properly
-  qcomma (fork @comma @lt     (lalt lctl lmet))
-  qdot   (fork @dot   @gt     (lalt lctl lmet))
-  qslash (fork @slash @q-mark (lalt lctl lmet))
+  qcomma (fork @comma @lt     (lsft))
+  qdot   (fork @dot   @gt     (lsft))
+  qslash (fork @slash @q-mark (lsft))
 )
 
 ;; U_QWERTY:
-(defchords qwe-chords 80
-  ;; f + j = caps-word (two shifts)
+(defchords qwe-chords 40
+  ;; f + j = caps-word
   (qt qy) @capw
   ;;
   (qz q/) (one-shot 1000 (layer-while-held U_BUTTON))
@@ -589,7 +604,7 @@ are mapped to letters
   qwe-v   (chord qwe-chords qv)
   qwe-b   (chord qwe-chords qb)
   ;; thumbs
-  qwe-bks @esc-med
+  qwe-bks @esc-qwx
   qwe-del @spc-nav
   qwe-end @tab-mou
   ;; right half(chord qwe-chords qz)
@@ -647,25 +662,42 @@ are mapped to letters
   @lwh-ctl
 )
 
+(deflayer U_QWERTY_EXTRA
+  ;; left
+  XX      XX      XX      XX      XX
+  met     alt     ctl     sft     XX
+  XX      XX      XX      XX      XX
+  @qwe-bks        @qwe-del        @qwe-end
+  ;; right
+  XX      [       `       '       XX
+  XX      XX      XX      XX      XX
+  XX      ]       ,       .       @backsl
+  @unmute         pp              @mute
+  ;; extra keys - not actually used, needed to intercept events
+  @lwh-ctl
+)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; experimental layer for Russian
 ;; based on Leonov's work here: https://habr.com/ru/articles/717912/
 (deflayer U_RUS_LEO
   ;; left
-;;цч к  л  б  й
+;;ц  к  л  б  й
   w  r  k  ,  q
-;;жз в  н  т  д
-  ;  d  y  n  l
+;;з  в  н  т  д
+  p  d  y  n  l
 ;;х  п  р  м  г
   [  g  h  v  u
-  bks        del        end
+  @qwe-bks        @qwe-del        @qwe-end
   ;; right
-;;щх ы  я  э  ф
-  o  s  z  '  z
-;;ьъ а  о  е  с
-  m  j  j  t  c
-;;шё и  у  ю  /
-  i  b  ,  .  /
+;;ш  ы  я  у  ф
+;;щ  ч  ж  ё
+  o  s  z  e  a
+;;ь  а  о  е  с
+;;ъ     у  ю
+  m  f  j  t  c
+;;ш  и  ,  .  /
+  i  b  @comma @dot @slash
   @qwe-pgd        @qwe-ret        @qwe-spc
   ;; extra keys - not actually used, needed to intercept events
   @lwh-ctl
@@ -813,8 +845,8 @@ are mapped to letters
   XX              XX              XX
   ;; right half
   @eng    @mwl    @ma↑    @mwr    @mwu
-  @rus    @ma←    @ma↓    @ma→    @mwd
-  XX      XX      XX      @hap-t  @hap-h
+  @rus-nt @ma←    @ma↓    @ma→    @mwd
+  @rus-leo XX      XX      @hap-t  @hap-h
   ;; thumbs - r/l/m mouse tapt (as opposed to clicks)
   mrtp            mltp            mmtp
   ;; extra keys - not actually used, needed to intercept events
@@ -851,9 +883,9 @@ are mapped to letters
   XX      XX      XX      XX      XX
   bks             XX              XX
   ;; right
-  XX      [       `       '       XX
-  XX      prev    XX      next    @miconoff
-  XX      ]       ,       .       grave
+  XX      XX      @volu   XX      XX
+  XX      prev    @vold   next    @miconoff
+  XX      XX      XX      XX      @backsl
   @unmute         pp              @mute
   ;; extra keys - not actually used, needed to intercept events
   @lwh-ctl
