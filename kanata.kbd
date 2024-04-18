@@ -43,7 +43,7 @@ In Windows, Hyper-keys are handled by MS PowerToys at the moment, considering a 
 Undo/Cut/Copy/Paste are chords on z/x/c/d/v.
 Notable changes from Miryoku/Kinesis:
 U_BASE:
-1.1. Restored home-row mod-taps. To fix problems due to rolls, I use fork.
+1.1. Restored home-row mod-taps. To fix problems due to rolls, I use _FAST layers.
 1.1.1. All keys in U_BASE are mapped to chords. Very easy to add new ones!
 1.1.2. When a key is pressed, its code is passed to chords.
 1.1.3. Chord decides if it's a single key (e.g., @met-a which is a/meta),
@@ -507,6 +507,10 @@ are mapped to letters
     @lsw-qwf
     (on-idle 35 tap-virtualkey fake-lsw-qwe)
   )
+  ;; Since I decided to use ,./ in both layouts, need to map these keys properly
+  qcomma (fork @comma @lt     (lalt lctl lmet))
+  qdot   (fork @dot   @gt     (lalt lctl lmet))
+  qslash (fork @slash @q-mark (lalt lctl lmet))
 )
 
 ;; U_QWERTY:
@@ -555,9 +559,9 @@ are mapped to letters
   ;;
   (qn            ) (multi n @qfast)
   (   qm         ) (multi m @qfast)
-  (      q,      ) (multi , @qfast)
-  (         q.   ) (multi . @qfast)
-  (            q/) (multi @slash @qfast)
+  (      q,      ) (multi @qcomma @qfast)
+  (         q.   ) (multi @qdot   @qfast)
+  (            q/) (multi @qslash @qfast)
   ;;
   (qi qo) ret
   (qm q,) @comma
@@ -761,7 +765,7 @@ are mapped to letters
   ;; right
   @rbrace home    up      end     pgup
   @rbrack left    down    right   pgdn
-  @rparen f23     f24     @hap-t  C-f24
+  @rparen f23     f24     A-f24  C-f24
   M-tab           del             ins
   ;; extra keys - not actually used, needed to intercept events
   @lwh-ctl
@@ -847,9 +851,9 @@ are mapped to letters
   XX      XX      XX      XX      XX
   bks             XX              XX
   ;; right
-  XX      XX      @volu   XX      XX
-  XX      prev    @vold   next    @miconoff
-  XX      ]       [       '       grave
+  XX      [       `       '       XX
+  XX      prev    XX      next    @miconoff
+  XX      ]       ,       .       grave
   @unmute         pp              @mute
   ;; extra keys - not actually used, needed to intercept events
   @lwh-ctl
