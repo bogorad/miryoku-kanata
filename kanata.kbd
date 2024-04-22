@@ -6,7 +6,7 @@ https://bogorad.github.io/
 Based on the brilliant Miryoku_kmonad => Kinesis layout
 https://github.com/manna-harbour/miryoku_kmonad
 
-With enourmous help from the author of Kanata
+With enormous help from the author of Kanata
 https://github.com/jtroo
 
 This is my second attempt at Kanata configuration.
@@ -207,7 +207,7 @@ so it can be serialized via (macro fake real whatever)
   lsw-tap (on-press tap-virtualkey fake-lsw-tap)
   lsw-sym (on-press tap-virtualkey fake-lsw-sym)
   lsw-syr (on-press tap-virtualkey fake-lsw-sym)
-  ;; shorter names for input swithing in Windows
+  ;; shorter names for input switching in Windows
   eng (on-press tap-virtualkey fake-lang-switch-eng)
   rus (on-press tap-virtualkey fake-lang-switch-rus)
   rus-nt (on-press tap-virtualkey fake-lang-switch-rus-notimeout)
@@ -313,7 +313,7 @@ are mapped to letters
   ;;   no-key / permanent layer-switch
   ;; EXPLANATION:
   ;; first tap => no action (XX)
-  ;; you need to TAP the key TWICE, tiemout=200ms,
+  ;; you need to TAP the key TWICE, timeout=200ms,
   ;; to permanently SWITCH to the layer wanted
   n-tap (tap-dance $tt (XX @lsw-tap))
   n-qwe (tap-dance $tt (XX @lsw-qwe))
