@@ -656,7 +656,7 @@ are mapped to letters
   ;; right
   y       u       @qwe-i   @qwe-o p
   h       j       k        l      ;
-  n       m       ,        .      /
+  n       m       @qwe-,  @qwe-.  @qwe-/
   @qwe-pgd        @qwe-ret        @qwe-spc
   ;; extra keys - not actually used, needed to intercept events
   @lwh-ctl
@@ -738,8 +738,8 @@ are mapped to letters
 (deflayer U_SYM
   ;; left
   S-1     S-2     S-3     S-4     S-5
-  S-scln  S-`     S-apo   S-eql   S-\
-  scln    `       apo     eql     \
+  S-\     S-`     S-apo   S-scln  S-8
+  \       `       apo     scln    @tradem
   S-9             S-0             S--
   ;; right
   S-6     S-7     S-8     S-9     S-0
@@ -754,8 +754,8 @@ are mapped to letters
 (deflayer U_SYM_RUS
   ;; left
   S-1     @at     @hash   @dollar @percen
-  @colon  @tilde  S-2     @plus   @pipe
-  @semicl @grave  @apo    @equal  @backsl
+  @pipe   @tilde  S-2     @colon  @plus
+  @backsl @grave  @apo    @semicl @tradem
   @lparen         @rparen         @unders
   ;; right
   @caret  @ampers S-8     S-9     S-0
@@ -792,12 +792,12 @@ are mapped to letters
   ;; added keys ([{}]) for VIM navigation
   lrld    @n-tap  @n-qwe  @n-bas  @lbrace
   met     alt     ctl     sft     @lbrack
-  XX      XX      left    right   @lparen
+  XX      XX      left    right   @caret
   XX              XX              XX
   ;; right
   @rbrace home    up      end     pgup
   @rbrack left    down    right   pgdn
-  @rparen f23     f24     A-f24  C-f24
+  @dollar f23     f24     A-f24  C-f24
   M-tab           del             ins
   ;; extra keys - not actually used, needed to intercept events
   @lwh-ctl
