@@ -789,7 +789,7 @@ are mapped to letters
 
 (deflayer U_NAV
   ;; left
-  ;; added keys ([{}]) for VIM navigation
+  ;; added keys {[^$]} for VIM navigation
   lrld    @n-tap  @n-qwe  @n-bas  @lbrace
   met     alt     ctl     sft     @lbrack
   XX      XX      left    right   @caret
