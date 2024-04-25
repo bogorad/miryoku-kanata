@@ -179,7 +179,7 @@ so it can be serialized via (macro fake real whatever)
   fake-lang-switch-rus (multi
     (on-press     tap-virtualkey fake-win-rus)
     (on-press     tap-virtualkey fake-lsw-qwe)
-    (on-idle 5000 tap-virtualkey fake-lang-switch-eng)
+    (on-idle 3000 tap-virtualkey fake-lang-switch-eng)
   )
   fake-lang-switch-rus-notimeout (multi
     (on-press     tap-virtualkey fake-win-rus)
@@ -219,6 +219,7 @@ so it can be serialized via (macro fake real whatever)
   ;; layer switching
   ;; temporary layer switching
   lwh-bas   (layer-while-held U_BASE)
+  lwh-baf   (layer-while-held U_BASE_FAST)
   lwh-but   (layer-while-held U_BUTTON)
   lwh-fun   (layer-while-held U_FUN)
   lwh-nav   (layer-while-held U_NAV)
@@ -528,6 +529,12 @@ are mapped to letters
   qslash (fork @slash @q-mark (lsft))
 )
 
+;; we want ctrl+ combos to work as if we're in U_BAS
+(defalias
+  q-dctl (tap-hold $tt $ht d (multi @lwh-baf ctl))
+  q-kctl (tap-hold $tt $ht d (multi @lwh-baf ctl))
+)
+
 ;; U_QWERTY:
 (defchords qwe-chords 40
   ;; f + j = caps-word
@@ -545,7 +552,8 @@ are mapped to letters
   ;;
   (qa            ) (multi (tap-hold $tt $ht a lmet) @qfast)
   (   qs         ) (multi (tap-hold $tt $ht s lalt) @qfast)
-  (      qd      ) (multi (tap-hold $tt $ht d lctl) @qfast)
+;;  (      qd      ) (multi (tap-hold $tt $ht d lctl) @qfast)
+  (      qd      ) (multi @q-dctl @qfast)
   (         qf   ) (multi (tap-hold $tt $ht f lsft) @qfast)
   (            qg) (multi g @qfast)
   ;;
@@ -568,13 +576,14 @@ are mapped to letters
   ;;
   (qh            ) (multi h @qfast)
   (   qj         ) (multi (tap-hold $tt $ht j lsft) @qfast)
-  (      qk      ) (multi (tap-hold $tt $ht k lctl) @qfast)
+;;  (      qk      ) (multi (tap-hold $tt $ht k lctl) @qfast)
+  (      qk      ) (multi @q-kctl @qfast)
   (         ql   ) (multi (tap-hold $tt $ht l lalt) @qfast)
   (            q;) (multi (tap-hold $tt $ht ; lmet) @qfast)
   ;;
   (qn            ) (multi n @qfast)
   (   qm         ) (multi m @qfast)
-  (      q,      ) (multi @qcomma @qfast)
+  (      q,      ) (multi , @qfast)
   (         q.   ) (multi @qdot   @qfast)
   (            q/) (multi @qslash @qfast)
   ;;
@@ -656,7 +665,7 @@ are mapped to letters
   ;; right
   y       u       @qwe-i   @qwe-o p
   h       j       k        l      ;
-  n       m       @qwe-,  @qwe-.  @qwe-/
+  n       m       @qwe-,   @qwe-. @qwe-/
   @qwe-pgd        @qwe-ret        @qwe-spc
   ;; extra keys - not actually used, needed to intercept events
   @lwh-ctl
