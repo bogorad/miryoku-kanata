@@ -532,7 +532,7 @@ are mapped to letters
 ;; we want ctrl+ combos to work as if we're in U_BAS
 (defalias
   q-dctl (tap-hold $tt $ht d (multi @lwh-baf ctl))
-  q-kctl (tap-hold $tt $ht d (multi @lwh-baf ctl))
+  q-kctl (tap-hold $tt $ht k (multi @lwh-baf ctl))
 )
 
 ;; U_QWERTY:
