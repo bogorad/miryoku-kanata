@@ -894,7 +894,7 @@ are mapped to letters
   ;; right
   XX      XX      @volu   XX      XX
   XX      prev    @vold   next    @miconoff
-  XX      XX      XX      XX      @backsl
+  XX      XX      XX      XX      XX
   @unmute         pp              @mute
   ;; extra keys - not actually used, needed to intercept events
   @lwh-ctl
