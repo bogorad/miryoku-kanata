@@ -790,7 +790,7 @@ are mapped to letters
   ;; right
   @rbrace home    up      end     pgup
   @rbrack left    down    right   pgdn
-  @dollar f23     f24     A-f24  C-f24
+  @dollar f23     C-f23   A-f23   M-f23
   M-tab           del             ins
   ;; extra keys - not actually used, needed to intercept events
   @lwh-ctl
@@ -839,7 +839,7 @@ are mapped to letters
   ;; right half
   @eng    @mwl    @ma↑    @mwr    @mwu
   @rus-nt @ma←    @ma↓    @ma→    @mwd
-  @rus-leo XX      XX      @hap-t  @hap-h
+  @rus-leo f24    C-f24   @hap-t  @hap-h
   ;; thumbs - r/l/m mouse tapt (as opposed to clicks)
   mrtp            mltp            mmtp
   ;; extra keys - not actually used, needed to intercept events
@@ -860,7 +860,7 @@ are mapped to letters
     (on-release tap-virtualkey micoff)
   )
   ;; reset sound system
-  sndrst (cmd C:\PROGRA~2\VB\VOICEM~1\VOICEM~4.EXE -R)
+  sndrst (cmd vmcli.exe Command.Restart=1)
   ;; send commands to VoiceMeeter
   mute   (cmd vmcli Bus[0].Mute=1)
   unmute (cmd vmcli Bus[0].Mute=0)
