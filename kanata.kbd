@@ -1,4 +1,4 @@
-#|
+﻿#|
 
 Written by Chuck in 2024
 https://bogorad.github.io/
@@ -333,17 +333,12 @@ are mapped to letters
 ;;
   at     (unicode @)
   hash   (unicode #)
-  rusnum (unicode №)
 ;;
   dollar (unicode $)
-  euro   (unicode €)
-  pound  (unicode £)
-  cent   (unicode ¢)
 ;;
   percen (unicode %)
   caret  (unicode ^)
   ampers (unicode &)
-  tradem (unicode ™)
 ;;
   apo    (unicode ')
 ;;
@@ -736,21 +731,21 @@ are mapped to letters
 ;; based on Leonov's work here: https://habr.com/ru/articles/717912/
 (deflayer U_RUS_LEO
   ;; left
-;;ц  к  л  б  й
+;;╤å  ╨║  ╨╗  ╨▒  ╨╣
   w  r  k  ,  q
-;;з  в  н  т  д
+;;╨╖  ╨▓  ╨╜  ╤é  ╨┤
   p  d  y  n  l
-;;х  п  р  м  г
+;;╤à  ╨┐  ╤Ç  ╨╝  ╨│
   [  g  h  v  u
   @qwe-bks        @qwe-del        @qwe-end
   ;; right
-;;ш  ы  я  у  ф
-;;щ  ч  ж  ё
+;;╤ê  ╤ï  ╤Å  ╤â  ╤ä
+;;╤ë  ╤ç  ╨╢  ╤æ
   o  s  z  e  a
-;;ь  а  о  е  с
-;;ъ     у  ю
+;;╤î  ╨░  ╨╛  ╨╡  ╤ü
+;;╤è     ╤â  ╤Ä
   m  f  j  t  c
-;;ш  и  ,  .  /
+;;╤ê  ╨╕  ,  .  /
   i  b  @comma @dot @slash
   @qwe-pgd        @qwe-ret        @qwe-spc
   ;; extra keys - not actually used, needed to intercept events
@@ -793,7 +788,7 @@ are mapped to letters
   ;; left
   S-1     S-2     S-3     S-4     S-5
   S-\     S-`     S-apo   S-scln  S-8
-  \       `       apo     scln    @tradem
+  \       `       apo     scln    XX
   S-9             S-0             S--
   ;; right
   S-6     S-7     S-8     S-9     S-0
@@ -809,7 +804,7 @@ are mapped to letters
   ;; left
   S-1     @at     @hash   @dollar @percen
   @pipe   @tilde  S-2     @colon  @plus
-  @backsl @grave  @apo    @semicl @tradem
+  @backsl @grave  @apo    @semicl XX
   @lparen         @rparen         @unders
   ;; right
   @caret  @ampers S-8     S-9     S-0
@@ -859,8 +854,8 @@ are mapped to letters
 
 (deflayer U_BUTTON
   ;; left
-  @email  @s-btc  @euro   @pound  @cent
-  @tradem alt     ctl     sft     @s-hyF
+  @email  @s-btc  XX      XX      XX
+  XX      alt     ctl     sft     @s-hyF
   @s-hyG  @s-hyH  @s-hyI  @s-hyJ  @s-hyK
   mmtp            mltp            mrtp
   ;; right
@@ -879,15 +874,15 @@ are mapped to letters
   mwl (mwheel-left 50 120)
   mwr (mwheel-right 50 120)
 
-  ms↑ (movemouse-up 1 1)
-  ms← (movemouse-left 1 1)
-  ms↓ (movemouse-down 1 1)
-  ms→ (movemouse-right 1 1)
+  msΓåæ (movemouse-up 1 1)
+  msΓåÉ (movemouse-left 1 1)
+  msΓåô (movemouse-down 1 1)
+  msΓåÆ (movemouse-right 1 1)
 
-  ma↑ (movemouse-accel-up 1 1000 1 5)
-  ma← (movemouse-accel-left 1 1000 1 5)
-  ma↓ (movemouse-accel-down 1 1000 1 5)
-  ma→ (movemouse-accel-right 1 1000 1 5)
+  maΓåæ (movemouse-accel-up 1 1000 1 5)
+  maΓåÉ (movemouse-accel-left 1 1000 1 5)
+  maΓåô (movemouse-accel-down 1 1000 1 5)
+  maΓåÆ (movemouse-accel-right 1 1000 1 5)
 )
 
 (deflayer U_MOUSE
@@ -898,8 +893,8 @@ are mapped to letters
   ;; thumbs
   XX              XX              XX
   ;; right half
-  @eng    @mwl    @ma↑    @mwr    @mwu
-  @rus-nt @ma←    @ma↓    @ma→    @mwd
+  @eng    @mwl    @maΓåæ    @mwr    @mwu
+  @rus-nt @maΓåÉ    @maΓåô    @maΓåÆ    @mwd
   @rus-leo f24    C-f24   @hap-t  @hap-h
   ;; thumbs - r/l/m mouse tapt (as opposed to clicks)
   mrtp            mltp            mmtp
