@@ -136,7 +136,7 @@ so we can copy+paste it and customize
 ;; global variables
 (defvar
   tap-timeout   200
-  hold-timeout  300
+  hold-timeout  200
   tt $tap-timeout
   ht $hold-timeout
 )
@@ -454,7 +454,7 @@ are mapped to letters
   ;;
   ;; u + y = enter, since the "real" enter is disabled
   (ku ky) ret
-  ;; u + y = enter, since the "real" enter is disabled
+  ;; l + u = shift+enter, since the "real" enter is disabled
   (kl ku) S-ret
   ;; , . / are chords so that they work both in English and in Russian
   (kh k,) ,
@@ -635,6 +635,8 @@ are mapped to letters
   (            q/) (multi @qslash @qfast)
   ;;
   (qi qo) ret
+  ;; l + u = shift+enter, since the "real" enter is disabled
+  (qu qi) S-ret
   (qm q,) @comma
   (q, q.) @dot
   (q. q/) S-7
@@ -710,7 +712,7 @@ are mapped to letters
   z       x       c        v      b
   @qwe-bks        @qwe-del        @qwe-end
   ;; right
-  y       u       @qwe-i   @qwe-o p
+  y       @qwe-u  @qwe-i   @qwe-o p
   h       j       k        l      ;
   n       m       @qwe-,   @qwe-. @qwe-/
   @qwe-pgd        @qwe-ret        @qwe-spc
