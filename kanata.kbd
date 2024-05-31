@@ -105,6 +105,11 @@ so we can copy+paste it and customize
     block-unmapped-keys yes
     danger-enable-cmd yes
     movemouse-inherit-accel-state yes
+;;    icon-match-layer-name no ;;|yes| match layer name to icon files even without an explicit (icon name.ico) config
+    tooltip-layer-changes no
+    tooltip-no-base true
+    notify-cfg-reload true
+    notify-cfg-reload-silent true
   )
 )
 
@@ -419,9 +424,9 @@ are mapped to letters
   (         kd   ) (multi d @bfast)
   (            kv) (multi v @bfast)
   ;; Undo/Cut/Copy/Paste
-  (kz kx         ) @undo
-  (   kx kc      ) @cut
-  (      kc kd   ) @copy
+;;  (kz kx         ) @undo
+;;  (   kx kc      ) @cut
+;;  (      kc kd   ) @copy
   (         kd kv) @paste
   ;;
   ;; f+p = vim command
@@ -449,6 +454,8 @@ are mapped to letters
   ;;
   ;; u + y = enter, since the "real" enter is disabled
   (ku ky) ret
+  ;; u + y = enter, since the "real" enter is disabled
+  (kl ku) S-ret
   ;; , . / are chords so that they work both in English and in Russian
   (kh k,) ,
   (k, k.) .
@@ -549,7 +556,7 @@ are mapped to letters
   z       x       c       d       v
   @bas-bks        @bas-del        @bas-end
   ;; right
-  j       l       @bas-u @bas-y  '
+  j       @bas-l  @bas-u @bas-y  '
   m       n       e       i       o
   k       h       ,       .       /
   @bas-pgd        @bas-ret        @bas-spc
@@ -721,7 +728,7 @@ are mapped to letters
   XX      [       `       '       XX
   XX      XX      XX      XX      XX
   XX      ]       ,       .       @backsl
-  @unmute         pp              @mute
+  XX              pp              @mutetg
   ;; extra keys - not actually used, needed to intercept events
   @lwh-ctl
 )
@@ -874,15 +881,15 @@ are mapped to letters
   mwl (mwheel-left 50 120)
   mwr (mwheel-right 50 120)
 
-  msΓåæ (movemouse-up 1 1)
-  msΓåÉ (movemouse-left 1 1)
-  msΓåô (movemouse-down 1 1)
-  msΓåÆ (movemouse-right 1 1)
+  mm-up (movemouse-up 1 1)
+  mm-le (movemouse-left 1 1)
+  mm-dn (movemouse-down 1 1)
+  mm-ri (movemouse-right 1 1)
 
-  maΓåæ (movemouse-accel-up 1 1000 1 5)
-  maΓåÉ (movemouse-accel-left 1 1000 1 5)
-  maΓåô (movemouse-accel-down 1 1000 1 5)
-  maΓåÆ (movemouse-accel-right 1 1000 1 5)
+  ma-up (movemouse-accel-up 1 1000 1 5)
+  ma-le (movemouse-accel-left 1 1000 1 5)
+  ma-dn (movemouse-accel-down 1 1000 1 5)
+  ma-ri (movemouse-accel-right 1 1000 1 5)
 )
 
 (deflayer U_MOUSE
@@ -893,9 +900,9 @@ are mapped to letters
   ;; thumbs
   XX              XX              XX
   ;; right half
-  @eng    @mwl    @maΓåæ    @mwr    @mwu
-  @rus-nt @maΓåÉ    @maΓåô    @maΓåÆ    @mwd
-  @rus-leo f24    C-f24   @hap-t  @hap-h
+  @eng    @mwl    @ma-up    @mwr    @mwu
+  @rus-nt @ma-le  @ma-dn    @ma-ri  @mwd
+  @rus-leo f24    C-f24     @hap-t  @hap-h
   ;; thumbs - r/l/m mouse tapt (as opposed to clicks)
   mrtp            mltp            mmtp
   ;; extra keys - not actually used, needed to intercept events
@@ -918,8 +925,7 @@ are mapped to letters
   ;; reset sound system
   sndrst (cmd vmcli.exe Command.Restart=1)
   ;; send commands to VoiceMeeter
-  mute   (cmd vmcli Bus[0].Mute=1)
-  unmute (cmd vmcli Bus[0].Mute=0)
+  mutetg (cmd vmcli !Bus[1].Mute;)
   volu   (cmd vmcli Bus[0].Gain+=1)
   vold   (cmd vmcli Bus[0].Gain-=1)
 )
@@ -935,7 +941,7 @@ are mapped to letters
   XX      XX      @volu   XX      XX
   XX      prev    @vold   next    @miconoff
   XX      XX      XX      XX      XX
-  @unmute         pp              @mute
+  XX              pp              @mutetg
   ;; extra keys - not actually used, needed to intercept events
   @lwh-ctl
 )
