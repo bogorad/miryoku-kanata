@@ -133,6 +133,16 @@ so we can copy+paste it and customize
   )
 )
 
+(environment (KANATA_PLATFORM qemu)
+  (defcfg
+    process-unmapped-keys yes
+    block-unmapped-keys yes
+    danger-enable-cmd yes
+    movemouse-inherit-accel-state yes
+    linux-dev /dev/input/by-path/platform-i8042-serio-0-event-kbd
+  )
+)
+
 ;; global variables
 (defvar
   tap-timeout   200
@@ -796,7 +806,7 @@ are mapped to letters
 (deflayer U_SYM
   ;; left
   S-1     S-2     S-3     S-4     S-5
-  S-\     S-`     S-apo   S-scln  S-8
+  S-\     S-`     S-apo   S-scln  eql
   \       `       apo     scln    XX
   S-9             S-0             S--
   ;; right
@@ -812,7 +822,7 @@ are mapped to letters
 (deflayer U_SYM_RUS
   ;; left
   S-1     @at     @hash   @dollar @percen
-  @pipe   @tilde  S-2     @colon  @plus
+  @pipe   @tilde  S-2     @colon  eql
   @backsl @grave  @apo    @semicl XX
   @lparen         @rparen         @unders
   ;; right
