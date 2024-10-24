@@ -1,4 +1,4 @@
-﻿#|
+#|
 
 Written by Chuck in 2024
 https://bogorad.github.io/
@@ -302,6 +302,7 @@ so it can be serialized via (macro fake real whatever)
   esc-med   (tap-hold-press $tt $ht @smart-esc @lwh-med)
   esc-qwx   (tap-hold-press $tt $ht @smart-esc @lwh-qwx)
   spc-nav   (tap-hold-press $tt $ht spc @lwh-nav)
+  d-nav     (tap-hold-press $tt $ht (chord bas-chords kd) @lwh-nav)
   tab-mou   (tap-hold-press $tt $ht @smart-tab @lwh-mou)
   ;; right (left-2-right order)
   ret-sym   (tap-hold-press $tt $ht XX  @lwh-sym)
@@ -404,12 +405,12 @@ are mapped to letters
 
 ;; U_BAS: Chords for home row and more:
 (defchords bas-chords 80
-  ;; b + j = caps-word (two shifts), then caps
-  (kb kj) @capw
+  (kp kl) @capw
   ;; z+/ = BUTTON layer only for the hext tap
   (kz k/) (one-shot 1000 (layer-while-held U_BUTTON))
   ;; switch to Russian (it's on a timeout so no need to define the reverse key)
-  (kd kh) @rus
+  (kv kk) @rus
+  (kb kj) @eng
   ;;
   (ka ko) lmet
   (kr ki) lalt
@@ -434,15 +435,14 @@ are mapped to letters
   (         kd   ) (multi d @bfast)
   (            kv) (multi v @bfast)
   ;; Undo/Cut/Copy/Paste
-;;  (kz kx         ) @undo
-;;  (   kx kc      ) @cut
-;;  (      kc kd   ) @copy
-  (         kd kv) @paste
+  (kx kc) tab
+  (kd kv) @paste
   ;;
-  ;; f+p = vim command
-  (kf kp) (macro esc @colon)
   ;; w+f = vim save
   (kw kf) (macro esc @colon w ret)
+  ;; p+b = {, t+g = [
+  (kp kb) S-{ ;;(macro @lbrace)
+  (kt kg) [ ;;(macro @lbrack)
   ;; right half
   (kj            ) (multi j @bfast)
   (   kl         ) (multi l @bfast)
@@ -462,6 +462,9 @@ are mapped to letters
   (         k.   ) (multi . @bfast)
   (            k/) (multi / @bfast)
   ;;
+  ;; j+l = }, m+n = ]
+  (kj kl) S-} ;;(macro @rbrace)
+  (km kn) ] ;;(macro @rbrack)
   ;; u + y = enter, since the "real" enter is disabled
   (ku ky) ret
   ;; l + u = shift+enter, since the "real" enter is disabled
@@ -489,7 +492,8 @@ are mapped to letters
   bas-z   (chord bas-chords kz)
   bas-x   (chord bas-chords kx)
   bas-c   (chord bas-chords kc)
-  bas-d   (chord bas-chords kd)
+  ;; bas-d   (chord bas-chords kd)
+  bas-d   @d-nav
   bas-v   (chord bas-chords kv)
   ;; thumbs
   ;; bas-bks (chord bas-chords k-bks)
@@ -563,7 +567,7 @@ are mapped to letters
   ;; left
   q       w       f       p       b
   a       r       s       t       g
-  z       x       c       d       v
+  z       @bas-x  @bas-c  d       v
   @bas-bks        @bas-del        @bas-end
   ;; right
   j       @bas-l  @bas-u @bas-y  '
@@ -595,11 +599,13 @@ are mapped to letters
 ;; U_QWERTY:
 (defchords qwe-chords 40
   ;; f + j = caps-word
-  (qt qy) @capw
+  (qr qu) @capw
   ;;
   (qz q/) (one-shot 1000 (layer-while-held U_BUTTON))
   ;;
-  (qv qm) @eng
+  ;; switch to English
+  (qt qy) @eng
+  (qv qm) @rus
   ;; left half
   (qq            ) (multi q @qfast)
   (   qw         ) (multi w @qfast)
@@ -620,10 +626,8 @@ are mapped to letters
   (         qv   ) (multi v @qfast)
   (            qb) (multi b @qfast)
   ;; Undo/Cut/Copy/Paste
-  (qz qx         ) @undo
-  (   qx qc      ) @cut
-  (      qc qv   ) @copy
-  (         qv qb) @paste
+  (qx qc) tab
+  (qv qb) @paste
   ;; right half
   (qy            ) (multi y @qfast)
   (   qu         ) (multi u @qfast)
@@ -858,9 +862,9 @@ are mapped to letters
 (deflayer U_NAV
   ;; left
   ;; added keys {[^$]} for VIM navigation
-  lrld    @n-tap  @n-qwe  @n-bas  @lbrace
-  met     alt     ctl     sft     @lbrack
-  XX      XX      left    right   @caret
+  lrld    @n-tap  @n-qwe  @n-bas  XX
+  met     alt     ctl     sft     XX
+  XX      XX      XX      XX      XX
   XX              XX              XX
   ;; right
   @rbrace home    up      end     pgup
