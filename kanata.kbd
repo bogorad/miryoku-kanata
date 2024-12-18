@@ -1,4 +1,4 @@
-#|
+﻿#|
 
 Written by Chuck in 2024
 https://bogorad.github.io/
@@ -435,14 +435,15 @@ are mapped to letters
   (         kd   ) (multi d @bfast)
   (            kv) (multi v @bfast)
   ;; Undo/Cut/Copy/Paste
-  (kx kc) tab
-  (kd kv) @paste
+  (kf kp) tab
+  (kc kd) @paste
   ;;
   ;; w+f = vim save
   (kw kf) (macro esc @colon w ret)
   ;; p+b = {, t+g = [
   (kp kb) S-{ ;;(macro @lbrace)
   (kt kg) [ ;;(macro @lbrack)
+  (kd kv) S-9 ;;(macro @lparen)
   ;; right half
   (kj            ) (multi j @bfast)
   (   kl         ) (multi l @bfast)
@@ -465,6 +466,7 @@ are mapped to letters
   ;; j+l = }, m+n = ]
   (kj kl) S-} ;;(macro @rbrace)
   (km kn) ] ;;(macro @rbrack)
+  (kk kh) S-0 ;;(macro @rparen)
   ;; u + y = enter, since the "real" enter is disabled
   (ku ky) ret
   ;; l + u = shift+enter, since the "real" enter is disabled
@@ -567,7 +569,7 @@ are mapped to letters
   ;; left
   q       w       f       p       b
   a       r       s       t       g
-  z       @bas-x  @bas-c  d       v
+  z       @bas-x  @bas-c  @bas-d  v
   @bas-bks        @bas-del        @bas-end
   ;; right
   j       @bas-l  @bas-u @bas-y  '
@@ -626,8 +628,11 @@ are mapped to letters
   (         qv   ) (multi v @qfast)
   (            qb) (multi b @qfast)
   ;; Undo/Cut/Copy/Paste
-  (qx qc) tab
-  (qv qb) @paste
+  (qe qr) tab
+  (qc qv) @paste
+  (qr qt) @lbrace
+  (qf qg) @lbrack
+  (qv qb) @lparen
   ;; right half
   (qy            ) (multi y @qfast)
   (   qu         ) (multi u @qfast)
@@ -651,6 +656,9 @@ are mapped to letters
   (qi qo) ret
   ;; l + u = shift+enter, since the "real" enter is disabled
   (qu qi) S-ret
+  (qy qu) @rbrace
+  (qh qj) @rbrack
+  (qn qm) @rparen
   (qm q,) @comma
   (q, q.) @dot
   (q. q/) S-7
@@ -723,7 +731,7 @@ are mapped to letters
   ;; left
   q       w       e        r      t
   a       s       d        f      g
-  z       x       c        v      b
+  z       x       @qwe-c   @qwe-v b
   @qwe-bks        @qwe-del        @qwe-end
   ;; right
   y       @qwe-u  @qwe-i   @qwe-o p
@@ -838,11 +846,12 @@ are mapped to letters
   @lwh-ctl
 )
 
+(defalias scr-ocr (cmd C:\Users\bogorad\AppData\Local\Programs\NormCap\NormCap.exe))
 (deflayer U_FUN
   ;; left
   f12     f7      f8      f9      prtsc
   f11     f4      f5      f6      slck
-  f10     f1      f2      f3      M-C-r ;;pause
+  f10     f1      f2      f3      @scr-ocr
   comp            spc             tab
   ;; right
   XX      @n-bas  @n-qwe  @n-tap  XX
@@ -864,7 +873,7 @@ are mapped to letters
   ;; added keys {[^$]} for VIM navigation
   lrld    @n-tap  @n-qwe  @n-bas  XX
   met     alt     ctl     sft     XX
-  XX      XX      XX      XX      XX
+  XX      XX      @paste  XX      XX
   XX              XX              XX
   ;; right
   @rbrace home    up      end     pgup
@@ -978,3 +987,4 @@ are mapped to letters
   ;; extra keys - not actually used, needed to intercept events
   XX
 )
+
